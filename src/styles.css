@@ -7,10 +7,12 @@
     }
 }
 
-.searchtarget-icon {
+img.searchtarget-icon {
     animation-name: flash;
     animation-duration: 4s;
     animation-fill-mode: both;
+    height: 16px!important;
+    width: 16px!important;
 }
 
 .rc .s .a, .s a:visited, .st a:link, .mblink:visited, .s a:visited{
