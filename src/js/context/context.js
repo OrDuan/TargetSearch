@@ -56,7 +56,7 @@ function attachLink(section, url, text) {
 }
 
 function setUpLinks() {
-  console.log('Settings links');
+  console.log('Setting links');
   for (let elm of document.getElementsByClassName('rc')) {
     let url = $(elm).find('a').attr('href');
     let newSections = [];
