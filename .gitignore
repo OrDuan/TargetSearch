@@ -3,3 +3,4 @@
 **.pem
 **.zip
 node_modules/**
+build/**

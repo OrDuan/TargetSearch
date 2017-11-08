@@ -1,6 +1,7 @@
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const glob = require("glob");
+const ZipPlugin = require('zip-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -28,7 +29,8 @@ module.exports = {
       'src/styles.css',
       {from: 'src/icons', to: 'icons/'},
     ]),
-    new MinifyPlugin(true)
+    new MinifyPlugin(true),
+    new ZipPlugin({filename: 'build.zip'}),
   ],
   stats: {
     colors: true
