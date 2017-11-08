@@ -44,7 +44,7 @@ function targetUrl() {
       url: url
     }
   };
-  chrome.runtime.sendMessage(request, function (response) {
+  chrome.runtime.sendMessage(request, response => {
     console.log(response);
   });
   window.open(url);
@@ -107,7 +107,7 @@ function scrollToElement(obj) {
 
 function findElement() {
   // For any other webpages check if we have it in out storage
-  chrome.runtime.sendMessage({action: "get", "data": window.location.href}, function (response) {
+  chrome.runtime.sendMessage({action: "get", "data": window.location.href}, response => {
     let extractedText = extractSearchText(response.data.text);
     let text = extractedText;
     console.log('Got data', text);
@@ -144,8 +144,8 @@ function findElement() {
   });
 }
 
-$(document).ready(function () {
-  chrome.runtime.sendMessage({action: "get", "data": window.location.href}, function (response) {
+$(document).ready(() => {
+  chrome.runtime.sendMessage({action: "get", "data": window.location.href}, () => {
     if (window.location.href.indexOf('.google.') !== -1 && $('#searchform').length) {
       setUpLinks();
       $('span[data-target-search-url]').on('click', targetUrl)
