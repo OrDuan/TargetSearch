@@ -1,0 +1,22 @@
+@keyframes flash {
+    0%, 20%, 40%, 60%, 80%, 100% {
+        opacity: 1;
+    }
+    10%, 30%, 50%, 70%, 90% {
+        opacity: 0;
+    }
+}
+
+.searchtarget-icon {
+    animation-name: flash;
+    animation-duration: 4s;
+    animation-fill-mode: both;
+}
+
+.rc .s .a, .s a:visited, .st a:link, .mblink:visited, .s a:visited{
+    color: #545454!important;
+}
+
+.rc .s .st a:visited em, .s .st a em {
+    color: #6a6a6a!important
+}
