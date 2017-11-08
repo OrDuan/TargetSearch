@@ -2,6 +2,7 @@ const MinifyPlugin = require("babel-minify-webpack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const glob = require("glob");
 const ZipPlugin = require('zip-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -30,6 +31,7 @@ module.exports = {
       {from: 'src/icons', to: 'icons/'},
     ]),
     new MinifyPlugin(true),
+    new UglifyJSPlugin({uglifyOptions:{compress: {drop_console: true}}}),
     new ZipPlugin({filename: 'build.zip'}),
   ],
   stats: {

@@ -28,7 +28,6 @@
         "https://*/*"
       ],
       "js": [
-        "jquery.js",
         "context.js"
       ],
       "css": [
