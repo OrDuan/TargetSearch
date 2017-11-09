@@ -1,12 +1,17 @@
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const glob = require("glob");
 const ZipPlugin = require('zip-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const webpack = require('webpack');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
+// TODO automate the CRX file build:
+// https://developer.chrome.com/extensions/external_extensions
+// https://developer.chrome.com/extensions/crx
+let context = './src/js/context/';
 module.exports = {
   entry: {
-    context: glob.sync('./src/js/context/**.js'),
+    app: [context + 'jquery.js', context + 'jquery-color.js', context + 'context.js'],
     background: './src/js/background.js'
   },
   output: {
@@ -25,13 +30,18 @@ module.exports = {
     ]
   },
   plugins: [
+    new CleanWebpackPlugin(['build']),
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery"
+    }),
     new CopyWebpackPlugin([
-      'src/manifest.json',
+      {from: 'src/manifest-prod.json', to: 'manifest.json'},
       'src/styles.css',
       {from: 'src/icons', to: 'icons/'},
     ]),
     new MinifyPlugin(true),
-    new UglifyJSPlugin({uglifyOptions:{compress: {drop_console: true}}}),
+    new UglifyJSPlugin({uglifyOptions: {compress: {drop_console: true}}}),
     new ZipPlugin({filename: 'build.zip'}),
   ],
   stats: {

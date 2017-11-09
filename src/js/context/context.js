@@ -86,9 +86,18 @@ function setUpLinks() {
   }
 }
 
-function addFoundUI($obj) {
+function handleUI($obj) {
   let iconUrl = chrome.extension.getURL('icons/icon16.png');
+  let originBackgroundcolor = $obj.css('background-color');
   $obj.prepend('<img class="searchtarget-icon" alt="TargetSearch" src="' + iconUrl + '"> ');
+
+  $obj.animate({
+    backgroundColor: $.Color("#abcdef")
+  }, 100);
+
+  $obj.animate({
+    backgroundColor: $.Color(originBackgroundcolor)
+  }, 1500);
 }
 
 function scrollToElement($obj) {
@@ -105,7 +114,7 @@ function scrollToElement($obj) {
     offset = elOffset;
   }
   body.animate({scrollTop: offset}, 500);
-  addFoundUI($obj);
+  handleUI($obj);
 }
 
 function findElement() {
