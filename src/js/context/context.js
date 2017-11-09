@@ -86,9 +86,13 @@ function setUpLinks() {
   }
 }
 
-function scrollToElement(obj) {
+function addFoundUI($obj) {
+  let iconUrl = chrome.extension.getURL('icons/icon16.png');
+  $obj.prepend('<img class="searchtarget-icon" alt="TargetSearch" src="' + iconUrl + '"> ');
+}
+
+function scrollToElement($obj) {
   let body = $("html, body");
-  let $obj = $(obj);
   let elOffset = $obj.offset().top;
   let elHeight = $obj.height();
   let windowHeight = $(window).height();
@@ -101,8 +105,7 @@ function scrollToElement(obj) {
     offset = elOffset;
   }
   body.animate({scrollTop: offset}, 500);
-  let iconUrl = chrome.extension.getURL('icons/icon16.png');
-  $obj.prepend('<img class="searchtarget-icon" alt="TargetSearch" src="' + iconUrl + '"> ');
+  addFoundUI($obj);
 }
 
 function findElement() {

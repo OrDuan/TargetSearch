@@ -16,7 +16,7 @@
     "zip-webpack-plugin": "^2.0.0"
   },
   "scripts": {
-    "build": "webpack",
+    "build": "webpack && echo '\\033[31m ###TEST your CRT, edit js content scripts from manifest.json ###'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
