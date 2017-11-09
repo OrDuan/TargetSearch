@@ -30,7 +30,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(['build']),
+    new CleanWebpackPlugin(['build', 'build.crx']),
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery"
