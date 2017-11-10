@@ -14,11 +14,13 @@
   "permissions": [
     "tabs",
     "<all_urls>",
-    "storage"
+    "storage",
+    "identity",
+    ""
   ],
   "background": {
     "scripts": [
-      "js/background.js"
+      "background.js"
     ]
   },
   "content_scripts": [
@@ -28,9 +30,7 @@
         "https://*/*"
       ],
       "js": [
-        "js/context/jquery.js",
-        "js/context/jquery-color.js",
-        "js/context/context.js"
+        "app.js"
       ],
       "css": [
         "styles.css"

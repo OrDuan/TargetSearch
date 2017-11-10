@@ -18,8 +18,12 @@
     "webpack": "^3.8.1",
     "zip-webpack-plugin": "^2.0.0"
   },
+  "resolutions": {
+    "webpack-sources": "1.0.1"
+  },
   "scripts": {
-    "build": "webpack && echo '\\033[33m ### TEST your exstention's build before continuing! ###'",
+    "build": "webpack --env.PROJECT_ENV=production && echo '\\033[33m ### TEST your exstention's build before publishing! ###'",
+    "watch": "webpack --watch --env.PROJECT_ENV=developent",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
