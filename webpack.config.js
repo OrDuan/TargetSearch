@@ -16,8 +16,8 @@ let context = './src/js/context/';
 // How to run on dev machine:
 // 1. Install Chromix-Too CLI, and extension, more info:
 // https://github.com/smblott-github/chromix-too#getting-started
-// 2. Run teh server in teh background: `chromix-too-server`
-// 3. open extensions page in chrome and leave it open: chrome://extensions/
+// 2. Run the server in the background: `chromix-too-server`
+// 3. Open extensions page in chrome and leave it open: chrome://extensions/
 // 4. In this page, click "Load unpacked extensions..." and pick the `build` directory
 // 5. Run `npm run watch`
 //
@@ -98,6 +98,6 @@ module.exports = env => {
       poll: 100,
       ignored: /node_modules/
     },
-    devtool: env.PROJECT_ENV === 'production' ? 'source-map' : 'none'
+    devtool: 'source-map'
   }
 };

@@ -16,7 +16,7 @@
     "<all_urls>",
     "storage",
     "identity",
-    ""
+    "notifications"
   ],
   "background": {
     "scripts": [

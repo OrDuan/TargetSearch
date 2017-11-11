@@ -31,7 +31,7 @@ function getTextFromSearchResult(elm) {
 }
 
 function getCleanTextFromSearchResult(elm) {
-  elm.find('span').remove(); // Remove redundant "jump to" tags etc
+  elm.find('span').not('[dir="rtl"]').remove(); // Remove redundant "jump to" tags etc
   return elm.text();
 }
 
@@ -70,6 +70,11 @@ function setUpLinks() {
 
     // For related search result we might have a redundant $elm
     if (!$paragraph.length) {
+      continue
+    }
+
+    // We might have paragraph elm, but it is has no text
+    if (!$paragraph.html()) {
       continue
     }
 
