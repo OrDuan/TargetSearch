@@ -12,9 +12,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       let text = response[request.data];
       console.log('backend', text);
       if (text) {
-        chrome.storage.local.remove(request.data);
+        chrome.storage.local.remove(request.data, () => {
+          sendResponse({status: "OK", data: {text: text}});
+        });
       }
-      sendResponse({status: "OK", data: {text: text}});
+      return true; // I'm going to return a response soon
     });
     return true; // I'm going to return a response soon
   }

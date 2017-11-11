@@ -98,6 +98,6 @@ module.exports = env => {
       poll: 100,
       ignored: /node_modules/
     },
-    devtool: 'source-map'
+    devtool: env.PROJECT_ENV === 'production' ? 'none' : 'source-map'
   }
 };

@@ -125,8 +125,9 @@ function scrollToElement($obj) {
 function findElement() {
   // For any other webpages check if we have it in out storage
   chrome.runtime.sendMessage({action: "get", "data": window.location.href}, response => {
-    if (Object.keys(response.data).length === 0) {
+    if ($.isEmptyObject(response.data)) {
       console.log('No data for this url');
+      console.log('Response:', response);
       return;
     }
     let extractedText = extractSearchText(response.data.text);
@@ -166,12 +167,10 @@ function findElement() {
 }
 
 $(document).ready(() => {
-  chrome.runtime.sendMessage({action: "get", "data": window.location.href}, () => {
-    if (window.location.href.indexOf('.google.') !== -1 && $('#searchform').length) {
-      setUpLinks();
-      $('span[data-target-search-url]').on('click', targetUrl)
-    } else {
-      findElement();
-    }
-  });
+  if (window.location.href.indexOf('.google.') !== -1 && $('#searchform').length) {
+    setUpLinks();
+    $('span[data-target-search-url]').on('click', targetUrl)
+  } else {
+    findElement();
+  }
 });
