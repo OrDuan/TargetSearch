@@ -125,6 +125,10 @@ function scrollToElement($obj) {
 function findElement() {
   // For any other webpages check if we have it in out storage
   chrome.runtime.sendMessage({action: "get", "data": window.location.href}, response => {
+    if (Object.keys(response.data).length === 0) {
+      console.log('No data for this url');
+      return;
+    }
     let extractedText = extractSearchText(response.data.text);
     let text = extractedText;
     console.log('Got data', text);
