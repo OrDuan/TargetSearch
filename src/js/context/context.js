@@ -82,8 +82,9 @@ function setUpLinks() {
   let featuredElm = document.getElementsByClassName('xpdopen')
   let url, $paragraph
   if (featuredElm.length) {
-    url = $(featuredElm).find('a').attr('href')
-    $paragraph = $(featuredElm).find('._Tgc')
+    let $featuredElm = $(featuredElm[0]);
+    url = $featuredElm.find('._Rm').text()
+    $paragraph = $featuredElm.find('._Tgc')
     setUpParagraph(url, $paragraph)
   }
 
