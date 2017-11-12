@@ -72,7 +72,6 @@ module.exports = env => {
   return {
     entry: {
       app: [context + 'jquery-color.js', context + 'context.js'],
-      background: './src/js/background.js'
     },
     output: {
       filename: '[name].js',

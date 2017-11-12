@@ -7,11 +7,6 @@ function extractSearchText(text) {
   // Remove any spaces
   text = text.trim();
 
-  // Take only the `n` words
-  // let words = text.split(' ');
-  // let maxWords = Math.min(words.length, NUMBER_OF_WORDS);
-  // let sentence = words.slice(0, maxWords).join(' ');
-
   // Sometimes they add a wired dot or comma in the end or start
   if (['.', ','].includes(text.slice(-1))) {
     text = text.slice(0, -1);
@@ -37,16 +32,8 @@ function getCleanTextFromSearchResult(elm) {
 
 function onClickSection() {
   let url = this.getAttribute('data-target-search-url');
-  let request = {
-    action: 'add',
-    data: {
-      text: this.getAttribute('data-target-search-text'),
-      url: url
-    }
-  };
-  chrome.runtime.sendMessage(request, response => {
-    console.log(response);
-  });
+  let text = this.getAttribute('data-target-search-text');
+  chrome.storage.local.set({[url]: text});
   window.open(url);
 }
 
@@ -137,47 +124,49 @@ function scrollToElement($obj) {
   handleUI($obj)
 }
 
-function findElement() {
-  // For any other webpages check if we have it in out storage
-  chrome.runtime.sendMessage({action: "get", "data": window.location.href}, response => {
-    if ($.isEmptyObject(response.data)) {
-      console.log('No data for this url')
-      console.log('Response:', response)
+function handleGetHrefFromStorage(response) {
+  let responseText = response[window.location.href]
+  let extractedText = extractSearchText(responseText)
+  let text = extractedText
+  console.log('Got data', text)
+  while (text.split(' ').length > MIN_WORDS_TO_CUT) {
+    let obj = $('body').find('*:contains("' + text + '"):last')
+    if (obj.length) {
+      scrollToElement(obj)
       return
     }
+    text = text.split(' ').slice(0, -1).join(' ')
+  }
 
-    let extractedText = extractSearchText(response.data.text)
-    let text = extractedText
-    console.log('Got data', text)
-    while (text.split(' ').length > MIN_WORDS_TO_CUT) {
-      let obj = $('body').find('*:contains("' + text + '"):last')
-      if (obj.length) {
-        scrollToElement(obj)
-        return
-      }
-      text = text.split(' ').slice(0, -1).join(' ')
+  // Try this again but this time cut from the beginning
+  text = extractedText
+  while (text.split(' ').length > MIN_WORDS_TO_CUT) {
+    let obj = $('body').find('*:contains("' + text + '"):last')
+    if (obj.length) {
+      scrollToElement(obj)
+      return
     }
+    text = text.split(' ').slice(1).join(' ')
+  }
 
-    // Try this again but this time cut from the beginning
-    text = extractedText
-    while (text.split(' ').length > MIN_WORDS_TO_CUT) {
-      let obj = $('body').find('*:contains("' + text + '"):last')
-      if (obj.length) {
-        scrollToElement(obj)
-        return
-      }
-      text = text.split(' ').slice(1).join(' ')
+  // Last time, now trying to remove from both sides at the same time
+  text = extractedText
+  while (text.split(' ').length > MIN_WORDS_TO_CUT) {
+    let obj = $('body').find('*:contains("' + text + '"):last')
+    if (obj.length) {
+      scrollToElement(obj)
+      return
     }
+    text = text.split(' ').slice(1).slice(0, -1).join(' ')
+  }
+}
 
-    // Last time, now trying to remove from both sides at the same time
-    text = extractedText
-    while (text.split(' ').length > MIN_WORDS_TO_CUT) {
-      let obj = $('body').find('*:contains("' + text + '"):last')
-      if (obj.length) {
-        scrollToElement(obj)
-        return
-      }
-      text = text.split(' ').slice(1).slice(0, -1).join(' ')
+
+function findElement() {
+  chrome.storage.local.get(window.location.href, response => {
+    if (response) {
+      handleGetHrefFromStorage(response)
+      chrome.storage.local.remove(window.location.href)
     }
   })
 }
