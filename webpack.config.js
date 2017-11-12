@@ -18,8 +18,8 @@ let context = './src/js/context/';
 // https://github.com/smblott-github/chromix-too#getting-started
 // 2. Run the server in the background: `chromix-too-server`
 // 3. Open extensions page in chrome and leave it open: chrome://extensions/
-// 4. In this page, click "Load unpacked extensions..." and pick the `build` directory
-// 5. Run `npm run watch`
+// 4. Run `npm run watch`
+// 5. In this page, click "Load unpacked extensions..." and pick the `build` directory
 //
 // Every time you make a change, the extension will be updated
 
