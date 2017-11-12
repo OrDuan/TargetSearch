@@ -9,8 +9,15 @@
     "128": "icons/icon128.png"
   },
   "web_accessible_resources": [
-    "icons/icon16.png"
+    "icons/icon16.png",
+    "icons/icon48.png",
+    "icons/icon128.png",
+    "popup-styles.css",
+    "media/**"
   ],
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
   "permissions": [
     "tabs",
     "<all_urls>",

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "clipboard": "^1.7.1",
     "jquery": "^3.2.1"
   },
   "devDependencies": {

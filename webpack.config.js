@@ -39,6 +39,15 @@ class ReloadExtensionsPage {
 
 module.exports = env => {
   let plugins = [];
+  let copyWebpackPlugin = new CopyWebpackPlugin([
+    'src/manifest.json',
+    'src/css/popup-styles.css',
+    'src/css/styles.css',
+    'src/html/popup.html',
+    {from: 'src/media', to: 'media/'},
+    {from: 'src/icons', to: 'icons/'},
+  ]);
+
   if (env.PROJECT_ENV === 'production') {
     plugins = [
       new CleanWebpackPlugin(['build', 'build.crx']),
@@ -46,11 +55,7 @@ module.exports = env => {
         $: "jquery",
         jQuery: "jquery"
       }),
-      new CopyWebpackPlugin([
-        {from: 'src/manifest.json', to: 'manifest.json'},
-        'src/styles.css',
-        {from: 'src/icons', to: 'icons/'},
-      ]),
+      copyWebpackPlugin,
       new MinifyPlugin(true),
       new UglifyJSPlugin({uglifyOptions: {compress: {drop_console: true}}}),
       new ZipPlugin({filename: 'build.zip'}),
@@ -58,11 +63,7 @@ module.exports = env => {
   } else {
     plugins = [
       new ReloadExtensionsPage(),
-      new CopyWebpackPlugin([
-        'src/manifest.json',
-        'src/styles.css',
-        {from: 'src/icons', to: 'icons/'},
-      ]),
+      copyWebpackPlugin,
       new webpack.ProvidePlugin({
         $: "jquery",
         jQuery: "jquery"
@@ -72,6 +73,7 @@ module.exports = env => {
   return {
     entry: {
       app: [context + 'jquery-color.js', context + 'context.js'],
+      popup: ['./src/js/popup.js'],
     },
     output: {
       filename: '[name].js',

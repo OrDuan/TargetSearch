@@ -1,0 +1,26 @@
+body {
+    margin: 0;
+}
+
+ul {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    font-size: 13px;
+}
+
+ul li.header {
+
+}
+
+ul li {
+    padding: 5px 15px;
+}
+
+ul li.item {
+    cursor: pointer;
+}
+
+ul li.item:hover {
+    background-color: #eeeeee;
+}
