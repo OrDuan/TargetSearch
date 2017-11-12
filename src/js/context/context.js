@@ -35,7 +35,7 @@ function getCleanTextFromSearchResult(elm) {
   return elm.text();
 }
 
-function targetUrl() {
+function onClickSection() {
   let url = this.getAttribute('data-target-search-url');
   let request = {
     action: 'add',
@@ -55,39 +55,54 @@ function attachLink(section, url, text) {
     onmouseout="this.style.textDecoration='none';" data-target-search-url="${url}" data-target-search-text="${text}">${section}</span>`
 }
 
+function setUpParagraph(url, $paragraph) {
+  let newSections = []
+  let paragraphPosition = 0
+
+  // No support for pdf
+  if (url.slice(-4) === '.pdf') {
+    return false
+  }
+
+  // For related search result we might have a redundant $elm
+  if (!$paragraph.length) {
+    return false
+  }
+
+  // We might have paragraph elm, but it is has no text
+  if (!$paragraph.html()) {
+    return false
+  }
+
+  let paragraphText = getTextFromSearchResult($paragraph)
+  let paragraphCleanText = getCleanTextFromSearchResult($paragraph)
+  for (let section of paragraphText.split('...')) {
+    if (!section) {
+      continue
+    }
+    newSections.push(attachLink(section, url, paragraphCleanText.split('...')[paragraphPosition]))
+    paragraphPosition++
+  }
+  $paragraph.html(newSections.join('...'))
+  return true
+}
+
 function setUpLinks() {
   console.log('Setting links');
+  // When google finds the best result, it features it on top of the search paragraphs
+  let featuredElm = document.getElementsByClassName('xpdopen')
+  let url, $paragraph
+  if (featuredElm.length) {
+    url = $(featuredElm).find('a').attr('href')
+    $paragraph = $(featuredElm).find('._Tgc')
+    setUpParagraph(url, $paragraph)
+  }
+
+  // Normal search paragraphs
   for (let elm of document.getElementsByClassName('rc')) {
-    let url = $(elm).find('a').attr('href')
-    let newSections = []
-    let paragraphPosition = 0
-    let $paragraph = $(elm).find('span.st')
-
-    // No support for pdf
-    if (url.slice(-4) === '.pdf') {
-      continue
-    }
-
-    // For related search result we might have a redundant $elm
-    if (!$paragraph.length) {
-      continue
-    }
-
-    // We might have paragraph elm, but it is has no text
-    if (!$paragraph.html()) {
-      continue
-    }
-
-    let paragraphText = getTextFromSearchResult($paragraph)
-    let paragraphCleanText = getCleanTextFromSearchResult($paragraph)
-    for (let section of paragraphText.split('...')) {
-      if (!section) {
-        continue
-      }
-      newSections.push(attachLink(section, url, paragraphCleanText.split('...')[paragraphPosition]))
-      paragraphPosition++
-    }
-    $paragraph.html(newSections.join('...'))
+    $paragraph = $(elm).find('span.st')
+    url = $(elm).find('a').attr('href')
+    setUpParagraph(url, $paragraph)
   }
 }
 
@@ -130,6 +145,7 @@ function findElement() {
       console.log('Response:', response)
       return
     }
+
     let extractedText = extractSearchText(response.data.text)
     let text = extractedText
     console.log('Got data', text)
@@ -169,7 +185,7 @@ function findElement() {
 $(document).ready(() => {
   if (window.location.href.indexOf('.google.') !== -1 && $('#searchform').length) {
     setUpLinks()
-    $('span[data-target-search-url]').on('click', targetUrl)
+    $('span[data-target-search-url]').on('click', onClickSection)
   } else {
     findElement()
   }

@@ -15,10 +15,10 @@ img.searchtarget-icon {
     width: 16px!important;
 }
 
-.rc .s .a, .s a:visited, .st a:link, .mblink:visited, .s a:visited{
-    color: #545454!important;
-}
+/*.rc .s .a, .s a:visited, .st a:link, .mblink:visited, .s a:visited{*/
+    /*color: #545454!important;*/
+/*}*/
 
-.rc .s .st a:visited em, .s .st a em {
-    color: #6a6a6a!important
-}
+/*.rc .s .st a:visited em, .s .st a em {*/
+    /*color: #6a6a6a!important*/
+/*}*/
