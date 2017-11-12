@@ -58,10 +58,10 @@ function attachLink(section, url, text) {
 function setUpLinks() {
   console.log('Setting links');
   for (let elm of document.getElementsByClassName('rc')) {
-    let url = $(elm).find('a').attr('href');
-    let newSections = [];
-    let paragraphPosition = 0;
-    let $paragraph = $(elm).find('span.st');
+    let url = $(elm).find('a').attr('href')
+    let newSections = []
+    let paragraphPosition = 0
+    let $paragraph = $(elm).find('span.st')
 
     // No support for pdf
     if (url.slice(-4) === '.pdf') {
@@ -78,99 +78,99 @@ function setUpLinks() {
       continue
     }
 
-    let paragraphText = getTextFromSearchResult($paragraph);
-    let paragraphCleanText = getCleanTextFromSearchResult($paragraph);
+    let paragraphText = getTextFromSearchResult($paragraph)
+    let paragraphCleanText = getCleanTextFromSearchResult($paragraph)
     for (let section of paragraphText.split('...')) {
       if (!section) {
         continue
       }
-      newSections.push(attachLink(section, url, paragraphCleanText.split('...')[paragraphPosition]));
-      paragraphPosition++;
+      newSections.push(attachLink(section, url, paragraphCleanText.split('...')[paragraphPosition]))
+      paragraphPosition++
     }
     $paragraph.html(newSections.join('...'))
   }
 }
 
 function handleUI($obj) {
-  let iconUrl = chrome.extension.getURL('icons/icon16.png');
-  let originBackgroundcolor = $obj.css('background-color');
-  $obj.prepend('<img class="searchtarget-icon" alt="TargetSearch" src="' + iconUrl + '"> ');
+  let iconUrl = chrome.extension.getURL('icons/icon16.png')
+  let originBackgroundcolor = $obj.css('background-color')
+  $obj.prepend('<img class="searchtarget-icon" alt="TargetSearch" src="' + iconUrl + '"> ')
 
   $obj.animate({
     backgroundColor: $.Color("#abcdef")
-  }, 100);
+  }, 100)
 
   $obj.animate({
     backgroundColor: $.Color(originBackgroundcolor)
-  }, 1500);
+  }, 1500)
 }
 
 function scrollToElement($obj) {
-  let body = $("html, body");
-  let elOffset = $obj.offset().top;
-  let elHeight = $obj.height();
-  let windowHeight = $(window).height();
-  let offset;
+  let body = $("html, body")
+  let elOffset = $obj.offset().top
+  let elHeight = $obj.height()
+  let windowHeight = $(window).height()
+  let offset
 
   if (elHeight < windowHeight) {
-    offset = elOffset - (((windowHeight / 2) - (elHeight / 2)) - 200);
+    offset = elOffset - (((windowHeight / 2) - (elHeight / 2)) - 200)
   }
   else {
-    offset = elOffset;
+    offset = elOffset
   }
-  body.animate({scrollTop: offset}, 500);
-  handleUI($obj);
+  body.animate({scrollTop: offset}, 500)
+  handleUI($obj)
 }
 
 function findElement() {
   // For any other webpages check if we have it in out storage
   chrome.runtime.sendMessage({action: "get", "data": window.location.href}, response => {
     if ($.isEmptyObject(response.data)) {
-      console.log('No data for this url');
-      console.log('Response:', response);
-      return;
+      console.log('No data for this url')
+      console.log('Response:', response)
+      return
     }
-    let extractedText = extractSearchText(response.data.text);
-    let text = extractedText;
-    console.log('Got data', text);
+    let extractedText = extractSearchText(response.data.text)
+    let text = extractedText
+    console.log('Got data', text)
     while (text.split(' ').length > MIN_WORDS_TO_CUT) {
-      let obj = $('body').find('*:contains("' + text + '"):last');
+      let obj = $('body').find('*:contains("' + text + '"):last')
       if (obj.length) {
-        scrollToElement(obj);
-        return;
+        scrollToElement(obj)
+        return
       }
-      text = text.split(' ').slice(0, -1).join(' ');
+      text = text.split(' ').slice(0, -1).join(' ')
     }
 
     // Try this again but this time cut from the beginning
-    text = extractedText;
+    text = extractedText
     while (text.split(' ').length > MIN_WORDS_TO_CUT) {
-      let obj = $('body').find('*:contains("' + text + '"):last');
+      let obj = $('body').find('*:contains("' + text + '"):last')
       if (obj.length) {
-        scrollToElement(obj);
-        return;
+        scrollToElement(obj)
+        return
       }
-      text = text.split(' ').slice(1).join(' ');
+      text = text.split(' ').slice(1).join(' ')
     }
 
     // Last time, now trying to remove from both sides at the same time
-    text = extractedText;
+    text = extractedText
     while (text.split(' ').length > MIN_WORDS_TO_CUT) {
-      let obj = $('body').find('*:contains("' + text + '"):last');
+      let obj = $('body').find('*:contains("' + text + '"):last')
       if (obj.length) {
-        scrollToElement(obj);
-        return;
+        scrollToElement(obj)
+        return
       }
-      text = text.split(' ').slice(1).slice(0, -1).join(' ');
+      text = text.split(' ').slice(1).slice(0, -1).join(' ')
     }
-  });
+  })
 }
 
 $(document).ready(() => {
   if (window.location.href.indexOf('.google.') !== -1 && $('#searchform').length) {
-    setUpLinks();
+    setUpLinks()
     $('span[data-target-search-url]').on('click', targetUrl)
   } else {
-    findElement();
+    findElement()
   }
-});
+})
