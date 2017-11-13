@@ -177,13 +177,13 @@ function handleGetHrefFromStorage(response) {
 }
 
 
-function findElement() {
-  chrome.storage.local.get(window.location.href, response => {
-    if (response) {
-      handleGetHrefFromStorage(response)
-      chrome.storage.local.remove(window.location.href)
-    }
-  })
+async function findElement() {
+  let response = await StorageManager.get(window.location.href)
+  if (!response) {
+    return
+  }
+  handleGetHrefFromStorage(response)
+  chrome.storage.local.remove(window.location.href)
 }
 
 async function shouldShowShareMenu() {
