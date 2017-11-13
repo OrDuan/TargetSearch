@@ -65,3 +65,11 @@ img.targetsearch-icon-flash {
 .targetsearch-share-menu-on-copy-success {
     display: none;
 }
+
+.targetsearch-share-menu .disable-btn {
+    position: absolute;
+    top: 1px;
+    right: 3px;
+    font-size: 15px;
+    z-index: 5;
+}

@@ -1,4 +1,5 @@
 import Clipboard from 'clipboard'
+import StorageManager from "../storage-manager";
 
 const MIN_WORDS_TO_CUT = 3; // The minimum words count to have, until this threshold we wil try to take out word by word
 
@@ -34,10 +35,15 @@ function getCleanTextFromSearchResult(elm) {
   return elm.text();
 }
 
-function onClickSection() {
+async function onClickSection() {
+  let userData = await StorageManager.getUserData()
   let url = decodeURI(this.getAttribute('data-target-search-url'));
   let text = decodeURI(this.getAttribute('data-target-search-text'));
-  chrome.storage.local.set({[url]: text});
+  StorageManager.set({
+    ...userData,
+    'userData.shareMenuCount': userData['userData.shareMenuCount'] + 1,
+    [url]: text
+  })
   window.open(url);
 }
 
@@ -105,7 +111,7 @@ function setUpLinks() {
 function handleUI($obj) {
   let iconUrl = chrome.extension.getURL('icons/icon16.png')
   let originBackgroundcolor = $obj.css('background-color')
-  $obj.prepend(`<img class="targetsearch-icon-sm targetsearch-icon-flash" alt="TargetSearch" src="${iconUrl}">`)
+  $obj.prepend(`<img class="targetsearch-icon-sm targetsearch-icon-flash" alt="TargetSearch" src="${iconUrl}"> `)
 
   $obj.animate({
     backgroundColor: $.Color("#abcdef")
@@ -180,13 +186,35 @@ function findElement() {
   })
 }
 
-function setUpShareMenu() {
+async function shouldShowShareMenu() {
+  let userData = await StorageManager.getUserData()
+  if (userData['userData.disableShareMenu'] === true) {
+    return false
+  }
+
+  if (userData['userData.shareMenuCount'] < 3) {
+    return false
+  }
+
+  if (userData['userData.shareMenuCount'] > 20) {
+    return false
+  }
+
+  return true
+}
+
+async function setUpShareMenu() {
+  if (!await shouldShowShareMenu()) {
+    return
+  }
+
   let iconUrl = chrome.extension.getURL('icons/icon48.png')
   let copyMenu = chrome.extension.getURL('media/copy_link_menu.png')
   // TODO shorten the url to track it? can we fire an event when someone opens the link?
   let extensionUrl = "https://chrome.google.com/webstore/detail/targetsearch/nohmjponpgbnhjokbmagdbnjpnmdaigb"
   $('body').append(`
     <div class="targetsearch-share-menu" data-clipboard-text="${extensionUrl}">
+    <div class="disable-btn">X</div>
       <div class="targetsearch-share-menu-context">
         <img class="targetsearch-icon-md targetsearch-icon" alt="TargetSearch" src="${iconUrl}">
         <div class="targetsearch-share-menu-default">
@@ -220,6 +248,15 @@ function setUpShareMenu() {
     $('.targetsearch-share-menu-hover').remove();
     $('.targetsearch-share-menu-default').remove();
     $('.targetsearch-share-menu-on-copy-success').fadeIn();
+  })
+
+  $('.targetsearch-share-menu .disable-btn').on('click', async (e) => {
+    // TODO analytics events
+    if (confirm("Are you sure you don't want to share the extension's link? Help other people by sharing it!")) {
+      await StorageManager.set({'userData.disableShareMenu': true})
+      $('.targetsearch-share-menu').remove()
+      e.stopPropagation()
+    }
   })
 }
 

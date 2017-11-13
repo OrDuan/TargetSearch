@@ -10,8 +10,6 @@ const {exec} = require('child_process');
 // https://developer.chrome.com/extensions/external_extensions
 // https://developer.chrome.com/extensions/crx
 // https://github.com/OctoLinker/browser-extension/blob/master/webpack.config.js
-let context = './src/js/context/';
-
 
 // How to run on dev machine:
 // 1. Install Chromix-Too CLI, and extension, more info:
@@ -72,13 +70,12 @@ module.exports = env => {
   }
   return {
     entry: {
-      app: [context + 'jquery-color.js', context + 'context.js'],
+      app: ['./src/js/context/jquery-color.js', './src/js/storage-manager.js', './src/js/context/context.js'],
       popup: ['./src/js/popup.js'],
     },
     output: {
       filename: '[name].js',
       path: __dirname + '/build'
-      // path: __dirname + env.PROJECT_ENV === 'production' ? '/build' : '/dev'
     },
     module: {
       loaders: [
@@ -86,7 +83,7 @@ module.exports = env => {
           test: /\.js$/,
           loader: 'babel-loader',
           query: {
-            presets: ['es2015']
+            presets: ['es2017', 'stage-2']
           }
         }
       ]
@@ -96,7 +93,7 @@ module.exports = env => {
       colors: true
     },
     watchOptions: {
-      poll: 100,
+      poll: 300,
       ignored: /node_modules/
     },
     devtool: env.PROJECT_ENV === 'production' ? 'none' : 'source-map'
