@@ -18,6 +18,8 @@ function extractSearchText(text) {
     text = text.slice(1, -1);
   }
 
+  text = text.replace(/"/g, String.raw`\"`)
+
   return text.trim();
 }
 
@@ -33,15 +35,15 @@ function getCleanTextFromSearchResult(elm) {
 }
 
 function onClickSection() {
-  let url = this.getAttribute('data-target-search-url');
-  let text = this.getAttribute('data-target-search-text');
+  let url = decodeURI(this.getAttribute('data-target-search-url'));
+  let text = decodeURI(this.getAttribute('data-target-search-text'));
   chrome.storage.local.set({[url]: text});
   window.open(url);
 }
 
 function attachLink(section, url, text) {
   return `<span onmouseover="this.style.textDecoration='underline';this.style.cursor='pointer';" 
-    onmouseout="this.style.textDecoration='none';" data-target-search-url="${url}" data-target-search-text="${text}">${section}</span>`
+    onmouseout="this.style.textDecoration='none';" data-target-search-url="${encodeURI(url)}" data-target-search-text="${encodeURI(text)}">${section}</span>`
 }
 
 function setUpParagraph(url, $paragraph) {
@@ -103,7 +105,7 @@ function setUpLinks() {
 function handleUI($obj) {
   let iconUrl = chrome.extension.getURL('icons/icon16.png')
   let originBackgroundcolor = $obj.css('background-color')
-  $obj.prepend(`<img class="targetsearch-icon-md targetsearch-icon-flash" alt="TargetSearch" src="${iconUrl}">`)
+  $obj.prepend(`<img class="targetsearch-icon-sm targetsearch-icon-flash" alt="TargetSearch" src="${iconUrl}">`)
 
   $obj.animate({
     backgroundColor: $.Color("#abcdef")
@@ -137,7 +139,7 @@ function handleGetHrefFromStorage(response) {
   let text = extractedText
   console.log('Got data', text)
   while (text.split(' ').length > MIN_WORDS_TO_CUT) {
-    let obj = $('body').find('*:contains("' + text + '"):last')
+    let obj = $('body').find(`*:contains("${text}"):last`)
     if (obj.length) {
       scrollToElement(obj)
       return
@@ -148,7 +150,7 @@ function handleGetHrefFromStorage(response) {
   // Try this again but this time cut from the beginning
   text = extractedText
   while (text.split(' ').length > MIN_WORDS_TO_CUT) {
-    let obj = $('body').find('*:contains("' + text + '"):last')
+    let obj = $('body').find(`*:contains("${text}"):last`)
     if (obj.length) {
       scrollToElement(obj)
       return
@@ -159,7 +161,7 @@ function handleGetHrefFromStorage(response) {
   // Last time, now trying to remove from both sides at the same time
   text = extractedText
   while (text.split(' ').length > MIN_WORDS_TO_CUT) {
-    let obj = $('body').find('*:contains("' + text + '"):last')
+    let obj = $('body').find(`*:contains("${text}"):last`)
     if (obj.length) {
       scrollToElement(obj)
       return
