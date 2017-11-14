@@ -243,15 +243,15 @@ async function setUpShareMenu() {
       <div class="targetsearch-share-menu-context">
         <img class="targetsearch-icon-md targetsearch-icon" alt="TargetSearch" src="${iconUrl}">
         <div class="targetsearch-share-menu-default">
-          <span>Help us to spread the word about TargetSearch?</span>
+          <span>Help spread the word about TargetSearch!</span>
         </div>
         <div class="targetsearch-share-menu-hover">
-            Click to copy extension's link :) Thanks! <3
+            Click to copy chrome store link :) Thanks! ♥
         </div>
         <div class="targetsearch-share-menu-on-copy-success">
           <div>Link copied!</div>
           <p>
-            Next time you can copy the link from the extension menu:
+            You can always share the link through the extension menu:
             <img src="${copyMenu}" class="targetsearch-share-menu-copy">
           </p>
         </div>
