@@ -56,7 +56,7 @@ module.exports = env => {
       copyWebpackPlugin,
       new MinifyPlugin(true),
       new UglifyJSPlugin({uglifyOptions: {compress: {drop_console: true}}}),
-      new ZipPlugin({path: '../',filename: 'build.zip'}),
+      new ZipPlugin({path: '../releases/', filename: `${new Date().toISOString().substr(0, 16)}.zip`}),
     ];
   } else {
     plugins = [
