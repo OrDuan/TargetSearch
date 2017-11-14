@@ -1,51 +1,50 @@
 import Clipboard from 'clipboard'
-import StorageManager from "../storage-manager";
-import * as URL from "url";
-
-const MIN_WORDS_TO_CUT = 3; // The minimum words count to have, until this threshold we wil try to take out word by word
+import StorageManager from '../storage-manager'
+import * as URL from 'url'
+import * as settings from '../settings'
 
 function extractSearchText(text) {
   // Check for this wired middle dot, mostly a janner or a category
-  text = text.split('·')[1] || text.split('·')[0];
+  text = text.split('·')[1] || text.split('·')[0]
 
   // Remove any spaces
-  text = text.trim();
+  text = text.trim()
 
   // Sometimes they add a wired dot or comma in the end or start
   if (['.', ','].includes(text.slice(-1))) {
-    text = text.slice(0, -1);
+    text = text.slice(0, -1)
   }
 
   if (['.', ','].includes(text.slice(0, 1))) {
-    text = text.slice(1, -1);
+    text = text.slice(1, -1)
   }
 
   text = text.replace(/"/g, String.raw`\"`)
 
-  return text.trim();
+  return text.trim()
 }
 
 
 function getTextFromSearchResult(elm) {
-  elm.find('span:contains("Jump")').remove(); // Remove redundant "jump to" tags etc
-  return elm.html();
+  elm.find('span:contains("Jump")').remove() // Remove redundant "jump to" tags etc
+  return elm.html()
 }
 
 function getCleanTextFromSearchResult(elm) {
-  elm.find('span').not('[dir="rtl"]').remove(); // Remove redundant "jump to" tags etc
-  return elm.text();
+  elm.find('span').not('[dir="rtl"]').remove() // Remove redundant "jump to" tags etc
+  return elm.text()
 }
 
 async function onClickSection() {
   let userData = await StorageManager.getUserData()
-  let url = decodeURI(this.getAttribute('data-target-search-url'));
-  let text = decodeURI(this.getAttribute('data-target-search-text'));
+  let url = decodeURI(this.getAttribute('data-target-search-url'))
+  let text = decodeURI(this.getAttribute('data-target-search-text'))
   StorageManager.set({
     ...userData,
     'userData.shareMenuCount': userData['userData.shareMenuCount'] + 1,
-    [url]: text
+    [url]: text,
   })
-  window.open(url);
+  window.open(url)
 }
 
 function attachLink(section, url, text) {
@@ -86,12 +85,12 @@ function setUpParagraph(url, $paragraph) {
 }
 
 function setUpLinks() {
-  console.log('Setting links');
+  console.log('Setting links')
   // When google finds the best result, it features it on top of the search paragraphs
   let featuredElm = document.getElementsByClassName('xpdopen')
   let url, $paragraph
   if (featuredElm.length) {
-    let $featuredElm = $(featuredElm[0]);
+    let $featuredElm = $(featuredElm[0])
     url = $featuredElm.find('._Rm').text()
     $paragraph = $featuredElm.find('._Tgc')
     setUpParagraph(url, $paragraph)
@@ -115,16 +114,16 @@ function handleUI($obj) {
   $obj.prepend(`<img class="targetsearch-icon-sm targetsearch-icon-flash" alt="TargetSearch" src="${iconUrl}"> `)
 
   $obj.animate({
-    backgroundColor: $.Color("#abcdef")
+    backgroundColor: $.Color('#abcdef'),
   }, 100)
 
   $obj.animate({
-    backgroundColor: $.Color(originBackgroundcolor)
+    backgroundColor: $.Color(originBackgroundcolor),
   }, 1500)
 }
 
 function scrollToElement($obj) {
-  let body = $("html, body")
+  let body = $('html, body')
   let elOffset = $obj.offset().top
   let elHeight = $obj.height()
   let windowHeight = $(window).height()
@@ -136,7 +135,8 @@ function scrollToElement($obj) {
   else {
     offset = elOffset
   }
-  body.animate({scrollTop: offset}, 500)
+
+  body.animate({scrollTop: offset}, settings.scrollingSpeed)
   handleUI($obj)
 }
 
@@ -144,7 +144,7 @@ function findText(storageText) {
   let extractedText = extractSearchText(storageText)
   let text = extractedText
   console.log('Got data', text)
-  while (text.split(' ').length > MIN_WORDS_TO_CUT) {
+  while (text.split(' ').length > settings.MIN_WORDS_TO_CUT) {
     let obj = $('body').find(`*:contains("${text}"):last`)
     if (obj.length) {
       scrollToElement(obj)
@@ -155,7 +155,7 @@ function findText(storageText) {
 
   // Try this again but this time cut from the beginning
   text = extractedText
-  while (text.split(' ').length > MIN_WORDS_TO_CUT) {
+  while (text.split(' ').length > settings.MIN_WORDS_TO_CUT) {
     let obj = $('body').find(`*:contains("${text}"):last`)
     if (obj.length) {
       scrollToElement(obj)
@@ -166,7 +166,7 @@ function findText(storageText) {
 
   // Last time, now trying to remove from both sides at the same time
   text = extractedText
-  while (text.split(' ').length > MIN_WORDS_TO_CUT) {
+  while (text.split(' ').length > settings.MIN_WORDS_TO_CUT) {
     let obj = $('body').find(`*:contains("${text}"):last`)
     if (obj.length) {
       scrollToElement(obj)
@@ -178,7 +178,7 @@ function findText(storageText) {
 
 
 async function getTextFromStorage() {
-  let currentUrl = window.location.href;
+  let currentUrl = window.location.href
   let url = await StorageManager.get(currentUrl)
   if (!$.isEmptyObject(url)) {
     chrome.storage.local.remove(window.location.href)
@@ -190,8 +190,8 @@ async function getTextFromStorage() {
   // TODO Don't get just the first one, order them by rank and pick the winner
   let allUrls = await StorageManager.get(null)
   for (let url in allUrls) {
-    let hostname = URL.parse(url).hostname;
-    let currentHostname = URL.parse(currentUrl).hostname;
+    let hostname = URL.parse(url).hostname
+    let currentHostname = URL.parse(currentUrl).hostname
     if (hostname === currentHostname) {
       chrome.storage.local.remove(url)
       return allUrls[url]
@@ -217,11 +217,11 @@ async function shouldShowShareMenu() {
     return false
   }
 
-  if (userData['userData.shareMenuCount'] < 3) {
+  if (userData['userData.shareMenuCount'] < settings.MIN_CLICKS_BEFORE_SHOWING_SHARE_MENU) {
     return false
   }
 
-  if (userData['userData.shareMenuCount'] > 20) {
+  if (userData['userData.shareMenuCount'] > settings.MAX_CLICKS_BEFORE_DISABLING_SHARE_MENU) {
     return false
   }
 
@@ -236,7 +236,7 @@ async function setUpShareMenu() {
   let iconUrl = chrome.extension.getURL('icons/icon48.png')
   let copyMenu = chrome.extension.getURL('media/copy_link_menu.png')
   // TODO shorten the url to track it? can we fire an event when someone opens the link?
-  let extensionUrl = "https://chrome.google.com/webstore/detail/targetsearch/nohmjponpgbnhjokbmagdbnjpnmdaigb"
+  let extensionUrl = 'https://chrome.google.com/webstore/detail/targetsearch/nohmjponpgbnhjokbmagdbnjpnmdaigb'
   $('body').append(`
     <div class="targetsearch-share-menu" data-clipboard-text="${extensionUrl}">
     <div class="disable-btn">X</div>
@@ -260,19 +260,19 @@ async function setUpShareMenu() {
 `)
   $('.targetsearch-share-menu')
     .mouseenter(() => {
-      $('.targetsearch-share-menu-default').hide();
-      $('.targetsearch-share-menu-hover').show();
+      $('.targetsearch-share-menu-default').hide()
+      $('.targetsearch-share-menu-hover').show()
     })
     .mouseleave(() => {
-      $('.targetsearch-share-menu-hover').hide();
-      $('.targetsearch-share-menu-default').show();
+      $('.targetsearch-share-menu-hover').hide()
+      $('.targetsearch-share-menu-default').show()
     })
   let cb = new Clipboard('.targetsearch-share-menu')
   cb.on('success', () => {
     // TODO analytics event
-    $('.targetsearch-share-menu-hover').remove();
-    $('.targetsearch-share-menu-default').remove();
-    $('.targetsearch-share-menu-on-copy-success').fadeIn();
+    $('.targetsearch-share-menu-hover').remove()
+    $('.targetsearch-share-menu-default').remove()
+    $('.targetsearch-share-menu-on-copy-success').fadeIn()
   })
 
   $('.targetsearch-share-menu .disable-btn').on('click', async (e) => {

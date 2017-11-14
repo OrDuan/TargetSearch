@@ -70,7 +70,7 @@ module.exports = env => {
   }
   return {
     entry: {
-      app: ['./src/js/context/jquery-color.js', './src/js/storage-manager.js', './src/js/context/context.js'],
+      app: ['./src/js/context/jquery-color.js', './src/js/context/context.js'],
       popup: ['./src/js/popup.js'],
     },
     output: {
