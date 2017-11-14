@@ -1,5 +1,6 @@
 import Clipboard from 'clipboard'
 import StorageManager from "../storage-manager";
+import * as URL from "url";
 
 const MIN_WORDS_TO_CUT = 3; // The minimum words count to have, until this threshold we wil try to take out word by word
 
@@ -139,9 +140,8 @@ function scrollToElement($obj) {
   handleUI($obj)
 }
 
-function handleGetHrefFromStorage(response) {
-  let responseText = response[window.location.href]
-  let extractedText = extractSearchText(responseText)
+function findText(storageText) {
+  let extractedText = extractSearchText(storageText)
   let text = extractedText
   console.log('Got data', text)
   while (text.split(' ').length > MIN_WORDS_TO_CUT) {
@@ -177,13 +177,38 @@ function handleGetHrefFromStorage(response) {
 }
 
 
-async function findElement() {
-  let response = await StorageManager.get(window.location.href)
-  if (!response) {
+async function getTextFromStorage() {
+  let currentUrl = window.location.href;
+  let url = await StorageManager.get(currentUrl)
+  if (!$.isEmptyObject(url)) {
+    chrome.storage.local.remove(window.location.href)
+    return url[currentUrl]
+  }
+
+  // If we couldn't find the url in the list, it means we redirected 302/301, let's try to find if the hostname
+  // is in our storage, if it does we guessing it is the right one.
+  // TODO Don't get just the first one, order them by rank and pick the winner
+  let allUrls = await StorageManager.get(null)
+  for (let url in allUrls) {
+    let hostname = URL.parse(url).hostname;
+    let currentHostname = URL.parse(currentUrl).hostname;
+    if (hostname === currentHostname) {
+      chrome.storage.local.remove(url)
+      return allUrls[url]
+    }
+  }
+
+  return null
+}
+
+async function onNoneGooglePageLoad() {
+  let text = await getTextFromStorage()
+  if (text === null) {
+    // TODO analytics event
+    console.log('Could not find any text for this page.')
     return
   }
-  handleGetHrefFromStorage(response)
-  chrome.storage.local.remove(window.location.href)
+  findText(text)
 }
 
 async function shouldShowShareMenu() {
@@ -265,6 +290,6 @@ $(document).ready(() => {
     setUpLinks()
     setUpShareMenu()
   } else {
-    findElement()
+    onNoneGooglePageLoad()
   }
 })
