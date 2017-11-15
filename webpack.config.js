@@ -46,7 +46,7 @@ module.exports = env => {
     {from: 'src/icons', to: 'icons/'},
   ]);
 
-  if (env.PROJECT_ENV === 'production') {
+  if (env.NODE_ENV === 'production') {
     plugins = [
       new CleanWebpackPlugin(['build', 'build.crx']),
       new webpack.ProvidePlugin({
@@ -54,7 +54,7 @@ module.exports = env => {
         jQuery: "jquery"
       }),
       new webpack.DefinePlugin({
-        'process.env': {NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')},
+        'process.env': {NODE_ENV: JSON.stringify(env.NODE_ENV || 'development')},
       }),
       copyWebpackPlugin,
       new MinifyPlugin(true),
@@ -66,7 +66,7 @@ module.exports = env => {
       new ReloadExtensionsPage(),
       copyWebpackPlugin,
       new webpack.DefinePlugin({
-        'process.env': {NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')},
+        'process.env': {NODE_ENV: JSON.stringify(env.NODE_ENV || 'development')},
       }),
       new webpack.ProvidePlugin({
         $: 'jquery',
@@ -103,6 +103,6 @@ module.exports = env => {
       poll: 300,
       ignored: /node_modules/
     },
-    devtool: env.PROJECT_ENV === 'production' ? 'none' : 'source-map'
+    devtool: env.NODE_ENV === 'production' ? 'none' : 'source-map'
   }
 };
