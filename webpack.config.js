@@ -53,6 +53,9 @@ module.exports = env => {
         $: "jquery",
         jQuery: "jquery"
       }),
+      new webpack.DefinePlugin({
+        'process.env': {NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')},
+      }),
       copyWebpackPlugin,
       new MinifyPlugin(true),
       new UglifyJSPlugin({uglifyOptions: {compress: {drop_console: true}}}),
@@ -62,9 +65,12 @@ module.exports = env => {
     plugins = [
       new ReloadExtensionsPage(),
       copyWebpackPlugin,
+      new webpack.DefinePlugin({
+        'process.env': {NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')},
+      }),
       new webpack.ProvidePlugin({
-        $: "jquery",
-        jQuery: "jquery"
+        $: 'jquery',
+        jQuery: 'jquery',
       }),
     ];
   }
@@ -72,6 +78,7 @@ module.exports = env => {
     entry: {
       app: ['./src/js/context/jquery-color.js', './src/js/context/context.js'],
       popup: ['./src/js/popup.js'],
+      background: ['./src/js/background.js'],
     },
     output: {
       filename: '[name].js',

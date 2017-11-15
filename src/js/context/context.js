@@ -2,6 +2,7 @@ import Clipboard from 'clipboard'
 import StorageManager from '../storage-manager'
 import * as URL from 'url'
 import * as settings from '../settings'
+import ga from '../analytices-manager'
 
 function extractSearchText(text) {
   // Check for this wired middle dot, mostly a janner or a category
@@ -147,6 +148,7 @@ function findText(storageText) {
   while (text.split(' ').length > settings.MIN_WORDS_TO_CUT) {
     let obj = $('body').find(`*:contains("${text}"):last`)
     if (obj.length) {
+      ga('send', 'event', 'findingAlgo', 'algo1')
       scrollToElement(obj)
       return
     }
@@ -158,6 +160,7 @@ function findText(storageText) {
   while (text.split(' ').length > settings.MIN_WORDS_TO_CUT) {
     let obj = $('body').find(`*:contains("${text}"):last`)
     if (obj.length) {
+      ga('send', 'event', 'findingAlgo', 'algo1')
       scrollToElement(obj)
       return
     }
@@ -169,11 +172,14 @@ function findText(storageText) {
   while (text.split(' ').length > settings.MIN_WORDS_TO_CUT) {
     let obj = $('body').find(`*:contains("${text}"):last`)
     if (obj.length) {
+      ga('send', 'event', 'findingAlgo', 'algo1')
       scrollToElement(obj)
       return
     }
     text = text.split(' ').slice(1).slice(0, -1).join(' ')
   }
+
+  ga('send', 'event', 'findingAlgo', 'cantFind')
 }
 
 
@@ -194,6 +200,7 @@ async function getTextFromStorage() {
     let currentHostname = URL.parse(currentUrl).hostname
     if (hostname === currentHostname) {
       chrome.storage.local.remove(url)
+      ga('send', 'event', 'textFromStorage', 'foundAsHost')
       return allUrls[url]
     }
   }
@@ -204,11 +211,11 @@ async function getTextFromStorage() {
 async function onNoneGooglePageLoad() {
   let text = await getTextFromStorage()
   if (text === null) {
-    // TODO analytics event
     console.log('Could not find any text for this page.')
     return
   }
   findText(text)
+  ga('send', 'pageview', '/target-page')
 }
 
 async function shouldShowShareMenu() {
@@ -269,18 +276,21 @@ async function setUpShareMenu() {
     })
   let cb = new Clipboard('.targetsearch-share-menu')
   cb.on('success', () => {
-    // TODO analytics event
+    ga('send', 'event', 'shareMenu', 'click')
     $('.targetsearch-share-menu-hover').remove()
     $('.targetsearch-share-menu-default').remove()
     $('.targetsearch-share-menu-on-copy-success').fadeIn()
   })
-
-  $('.targetsearch-share-menu .disable-btn').on('click', async (e) => {
-    // TODO analytics events
+  const $targetsearch = $('.targetsearch-share-menu .disable-btn')
+  $targetsearch.hover(e => {
+    e.stopPropagation()
+  })
+  $targetsearch.on('click', async (e) => {
+    ga('send', 'event', 'shareMenuDisable', 'click')
+    e.stopPropagation()
     if (confirm("Are you sure you don't want to share the extension's link? Help other people by sharing it!")) {
       await StorageManager.set({'userData.disableShareMenu': true})
       $('.targetsearch-share-menu').remove()
-      e.stopPropagation()
     }
   })
 }
@@ -289,6 +299,7 @@ $(document).ready(() => {
   if (window.location.href.indexOf('.google.') !== -1 && $('#searchform').length) {
     setUpLinks()
     setUpShareMenu()
+    ga('send', 'pageview', '/search-results')
   } else {
     onNoneGooglePageLoad()
   }

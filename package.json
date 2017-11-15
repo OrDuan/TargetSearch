@@ -25,8 +25,8 @@
     "webpack-sources": "1.0.1"
   },
   "scripts": {
-    "build": "webpack --env.PROJECT_ENV=production && echo '\\033[33m ### TEST your extension's build before publishing! && echo 'Upload to https://chrome.google.com/webstore/developer/edit/nohmjponpgbnhjokbmagdbnjpnmdaigb'",
-    "watch": "webpack --watch --env.PROJECT_ENV=developent",
+    "build": "webpack --env.NODE_ENV=production && echo '\\033[33m ### TEST your extension's build before publishing! && echo 'Upload to https://chrome.google.com/webstore/developer/edit/nohmjponpgbnhjokbmagdbnjpnmdaigb'",
+    "watch": "webpack --watch --env.NODE_ENV=developent",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
