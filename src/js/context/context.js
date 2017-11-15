@@ -137,7 +137,7 @@ function scrollToElement($obj) {
     offset = elOffset
   }
 
-  body.animate({scrollTop: offset}, settings.scrollingSpeed)
+  body.animate({scrollTop: offset}, settings.SCROLLING_SPEED)
   handleUI($obj)
 }
 
