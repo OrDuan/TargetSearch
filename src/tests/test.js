@@ -12,40 +12,68 @@ const click = async (page, selector) => {
   }, selector)
 }
 
+async function searchAndScoll(page) {
+  let searchResults = await page.$$('.rc')
+  for (let searchElm of searchResults) {
+    let url = await page.evaluate(e => e.innerText, await searchElm.$('._Rm'))
+    if (url === 'https://www.lipsum.com/') {
+      await click(page, `a[data-target-search-url="${url}"]`)
+      break
+    }
+  }
+  await page.waitForSelector('.targetsearch-icon-sm')
+  await sleep(100) // Scrolling has some delay
+
+  let scrollTop = await page.evaluate(() => window.scrollY)
+  let targetElement = await page.evaluate(() => document.querySelectorAll('.targetsearch-icon-sm').length)
+  return {scrollTop, targetElement}
+}
+
 describe('Extension', function () {
+  let browser
+  before(async function () {
+    browser = await puppeteer.launch({
+      headless: false,
+      args: [
+        '--disable-extensions-except=build/',
+      ],
+    })
+  })
+
+  after(async function () {
+    await browser.close()
+  })
+
   describe('Search', function () {
     it('Should scroll to the target', async function () {
       this.timeout(10000)
-      const browser = await puppeteer.launch({
-        headless: false,
-        args: [
-          '--disable-extensions-except=build/',
-        ],
-      })
       const page = await browser.newPage()
       await page.goto('https://www.google.co.il/search?q=random+text&oq=random+text&aqs=chrome..69i57j69i60j0j69i59j0l2.1392j0j9&sourceid=chrome&ie=UTF-8')
-      let searchResults = await page.$$('.rc')
-      for (let searchElm of searchResults) {
-        let url = await page.evaluate(e => e.innerText, await searchElm.$('._Rm'))
-        let grayLine = await searchElm.$('a[data-target-search-url]')
-        if (url === 'https://www.lipsum.com/') {
-          console.log(await page.evaluate(e => e.getAttribute('data-target-search-url'), await grayLine))
 
-          await click(page, `a[data-target-search-url="${url}"]`)
-          break
-        }
-      }
-      await page.waitForSelector('.targetsearch-icon-sm')
-      await sleep(100) // Scrolling has some delay
-
-      let scrollTop = await page.evaluate(() => window.scrollY)
-      let targetElement = await page.evaluate(() => document.querySelectorAll('.targetsearch-icon-sm').length)
+      let {scrollTop, targetElement} = await searchAndScoll(page)
 
       expect(scrollTop).to.be.above(0)
       expect(targetElement).to.be.equal(1)
-      await browser.close()
+    })
 
+    it('Should scroll to the target in english template', async function () {
+      this.timeout(10000)
 
+      const page = await browser.newPage()
+      await page.goto('https://google.co.il')
+
+      let englishBtn = await page.$$('#_eEe a[href*="setpref"]')
+      await englishBtn[1].click()
+      await page.waitForNavigation()
+
+      let isEnglish = await page.evaluate(() => document.documentElement.textContent.indexOf('Sign in') > -1)
+      expect(isEnglish).to.be.true
+
+      await page.goto('https://www.google.co.il/search?q=random+text&oq=random+text&aqs=chrome..69i57j69i60j0j69i59j0l2.1392j0j9&sourceid=chrome&ie=UTF-8')
+      let {scrollTop, targetElement} = await searchAndScoll(page)
+
+      expect(scrollTop).to.be.above(0)
+      expect(targetElement).to.be.equal(1)
     })
   })
 })

@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === 'production') {
   ga('require', 'displayfeatures');
 } else {
   window.ga = () => {}
-  console.log('not analitycs for backgou')
+  console.log('No analytics in development environment')
 }
 
 
