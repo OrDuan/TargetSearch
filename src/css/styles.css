@@ -74,3 +74,12 @@ img.targetsearch-icon-flash {
     z-index: 5;
     padding: 3px;
 }
+
+.targetsearch-section-link, .s .targetsearch-section-link:visited, .s a.targetsearch-section-link:link, .s .targetsearch-section-link:visited em {
+    all: unset;
+    line-height: 1.24;
+    word-wrap: break-word;
+    color: #545454!important;;
+    font-size: small;
+    font-family: arial, sans-serif;
+}

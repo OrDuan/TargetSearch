@@ -4,6 +4,8 @@ import * as URL from 'url'
 import * as settings from '../settings'
 import ga from '../analytices-manager'
 
+let isRTL
+
 function extractSearchText(text) {
   // Check for this wired middle dot, mostly a janner or a category
   text = text.split('·')[1] || text.split('·')[0]
@@ -32,7 +34,12 @@ function getTextFromSearchResult(elm) {
 }
 
 function getCleanTextFromSearchResult(elm) {
-  elm.find('span').not('[dir="rtl"]').remove() // Remove redundant "jump to" tags etc
+  if (isRTL) {
+    elm.find('span').not('[dir="ltr"]').remove()
+  } else {
+    elm.find('span').not('[dir="rtl"]').remove()
+  }
+
   return elm.text()
 }
 
@@ -40,17 +47,16 @@ async function onClickSection() {
   let userData = await StorageManager.getUserData()
   let url = decodeURI(this.getAttribute('data-target-search-url'))
   let text = decodeURI(this.getAttribute('data-target-search-text'))
+  console.log(`section clicked: ${url}`)
   StorageManager.set({
     ...userData,
     'userData.shareMenuCount': userData['userData.shareMenuCount'] + 1,
     [url]: text,
   })
-  window.open(url)
 }
 
 function attachLink(section, url, text) {
-  return `<span onmouseover="this.style.textDecoration='underline';this.style.cursor='pointer';" 
-    onmouseout="this.style.textDecoration='none';" data-target-search-url="${encodeURI(url)}" data-target-search-text="${encodeURI(text)}">${section}</span>`
+  return `<a class="targetsearch-section-link" href="${url}" data-target-search-url="${encodeURI(url)}" data-target-search-text="${encodeURI(text)}">${section}</a>`
 }
 
 function setUpParagraph(url, $paragraph) {
@@ -87,14 +93,22 @@ function setUpParagraph(url, $paragraph) {
 
 function setUpLinks() {
   console.log('Setting links')
+
   // When google finds the best result, it features it on top of the search paragraphs
   let featuredElm = document.getElementsByClassName('xpdopen')
   let url, $paragraph
+
+  isRTL = $('html').attr('dir') === 'rtl'
+
   if (featuredElm.length) {
     let $featuredElm = $(featuredElm[0])
     url = $featuredElm.find('._Rm').text()
     $paragraph = $featuredElm.find('._Tgc')
-    setUpParagraph(url, $paragraph)
+
+    // In rtl template we might have `xpdopen` so we need more validation
+    if (url.length && $paragraph.length) {
+      setUpParagraph(url, $paragraph)
+    }
   }
 
   // Normal search paragraphs
@@ -105,7 +119,7 @@ function setUpLinks() {
   }
 
   // Setup the onclick event to trigger window open
-  $('span[data-target-search-url]').on('click', onClickSection)
+  $('a[data-target-search-url]').on('click', onClickSection)
 
 }
 

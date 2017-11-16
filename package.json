@@ -17,6 +17,7 @@
     "clean-webpack-plugin": "^0.1.17",
     "copy-webpack-plugin": "^4.2.0",
     "glob": "^7.1.2",
+    "puppeteer": "^0.13.0",
     "uglifyjs-webpack-plugin": "^1.0.1",
     "webpack": "^3.8.1",
     "zip-webpack-plugin": "^2.0.0"
@@ -27,7 +28,7 @@
   "scripts": {
     "build": "webpack --env.NODE_ENV=production && echo '\\033[33m ### TEST your extension's build before publishing! && echo 'Upload to https://chrome.google.com/webstore/developer/edit/nohmjponpgbnhjokbmagdbnjpnmdaigb'",
     "watch": "webpack --watch --env.NODE_ENV=developent",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "/usr/local/bin/node src/tests/test.js"
   },
   "repository": {
     "type": "git",
