@@ -39,11 +39,8 @@ module.exports = env => {
   let plugins = [];
   let copyWebpackPlugin = new CopyWebpackPlugin([
     'src/manifest.json',
-    'src/css/popup-styles.css',
-    'src/css/styles.css',
     'src/html/popup.html',
-    {from: 'src/media', to: 'media/'},
-    {from: 'src/icons', to: 'icons/'},
+    {from: 'src/assets', to: 'assets/', ignore: ['*.js']},
   ]);
 
   if (env.NODE_ENV === 'production') {
@@ -76,9 +73,9 @@ module.exports = env => {
   }
   return {
     entry: {
-      app: ['./src/js/context/jquery-color.js', './src/js/context/context.js'],
-      popup: ['./src/js/popup.js'],
-      background: ['./src/js/background.js'],
+      app: ['./src/assets/js/context/jquery-color.js', './src/assets/js/context/context.js'],
+      popup: ['./src/assets/js/popup.js'],
+      background: ['./src/assets/js/background.js'],
     },
     output: {
       filename: '[name].js',

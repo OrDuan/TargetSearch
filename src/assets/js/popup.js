@@ -8,5 +8,6 @@ $(document).ready(() => {
     let $alert = $('.alert');
     $alert.fadeIn(300)
     setTimeout(() => $alert.fadeOut(1000), 3000)
+
   })
 })
