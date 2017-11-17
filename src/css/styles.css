@@ -60,6 +60,7 @@ img.targetsearch-icon-flash {
     border: 2px solid black;
     border-radius: 10px;
     padding: 5px 5px 5px 20px;
+    background: white;
 }
 
 .targetsearch-share-menu-on-copy-success {
@@ -82,4 +83,10 @@ img.targetsearch-icon-flash {
     color: #545454!important;;
     font-size: small;
     font-family: arial, sans-serif;
+}
+
+.targetsearch-share-menu h3 {
+    font-weight: bold;
+    margin: 5px;
+    font-size: 18px;
 }

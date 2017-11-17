@@ -75,5 +75,10 @@ describe('Extension', function () {
       expect(scrollTop).to.be.above(0)
       expect(targetElement).to.be.equal(1)
     })
+
+    it('should close the share menu')
+    it('should copy link from share menu')
+    it('should copy link from popup menu')
+    it('should count the section clicks')
   })
 })

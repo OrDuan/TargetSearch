@@ -30,7 +30,7 @@
   "scripts": {
     "build": "webpack --env.NODE_ENV=production && echo '\\033[33m ### TEST your extension's build before publishing! && echo 'Upload to https://chrome.google.com/webstore/developer/edit/nohmjponpgbnhjokbmagdbnjpnmdaigb'",
     "watch": "webpack --watch --env.NODE_ENV=developent",
-    "test": "/usr/local/bin/node src/tests/test.js"
+    "test": "/usr/local/bin/node node_modules/mocha/bin/_mocha src/tests/test.js"
   },
   "repository": {
     "type": "git",

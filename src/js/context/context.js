@@ -270,7 +270,7 @@ async function setUpShareMenu() {
             Click to copy chrome store link :) Thanks! ♥
         </div>
         <div class="targetsearch-share-menu-on-copy-success">
-          <div>Link copied!</div>
+          <h3>Link copied!</h3>
           <p>
             You can always share the link through the extension menu:
             <img src="${copyMenu}" class="targetsearch-share-menu-copy">
