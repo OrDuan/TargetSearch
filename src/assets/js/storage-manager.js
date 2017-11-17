@@ -3,6 +3,7 @@ class StorageManager {
     this.userDataDefaults = {
       'userData.shareMenuCount': 0,
       'userData.disableShareMenu': false,
+      'userData.extensionRanking': 0,
     }
   }
 

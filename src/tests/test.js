@@ -80,5 +80,7 @@ describe('Extension', function () {
     it('should copy link from share menu')
     it('should copy link from popup menu')
     it('should count the section clicks')
+    it('should rank the extension with bad rank')
+    it('should rank the extension with best rank')
   })
 })

@@ -256,10 +256,8 @@ async function setUpShareMenu() {
 
   let iconUrl = chrome.extension.getURL('icons/icon48.png')
   let copyMenu = chrome.extension.getURL('media/copy_link_menu.png')
-  // TODO shorten the url to track it? can we fire an event when someone opens the link?
-  let extensionUrl = 'https://chrome.google.com/webstore/detail/targetsearch/nohmjponpgbnhjokbmagdbnjpnmdaigb'
   $('body').append(`
-    <div class="targetsearch-share-menu" data-clipboard-text="${extensionUrl}">
+    <div class="targetsearch-share-menu" data-clipboard-text="${settings.CHROME_STORE_LINK}">
     <div class="disable-btn">X</div>
       <div class="targetsearch-share-menu-context">
         <img class="targetsearch-icon-md targetsearch-icon" alt="TargetSearch" src="${iconUrl}">
