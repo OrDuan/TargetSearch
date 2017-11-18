@@ -33,7 +33,7 @@ describe('Extension', function () {
   let browser
   before(async function () {
     browser = await puppeteer.launch({
-      headless: false, //process.env.NODE_ENV === 'testing' extension not working with headless. Yet?
+      headless: false, //process.env.NODE_ENV === 'ci-testing' extension not working with headless. Yet?
       args: [
         '--disable-extensions-except=build/',
         '--no-sandbox',
