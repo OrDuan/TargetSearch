@@ -6,7 +6,7 @@ import ga from './analytices-manager'
 function alertMessage(html) {
   let $alert = $('.alert')
   $alert.fadeIn(300)
-  $alert.html(html)
+  $alert.find('.text').html(html)
   setTimeout(() => $alert.fadeOut(1000), 3000)
 }
 
@@ -15,13 +15,15 @@ $(document).ready(async () => {
   let cb = new Clipboard('.copy-btn')
   cb.on('success', () => {
     ga('send', 'event', 'popupShareLink', 'copy')
-    alertMessage('<br><br>Link copied.<br><br>Please share it! ♥')
+    alertMessage('Link copied.<br><br>Please share it! ♥')
   })
   let currentRank = (await StorageManager.get('userData.extensionRanking'))['userData.extensionRanking']
 
   if (1 <= currentRank && currentRank <= 3) {
     $('.rating').hide()
   }
+
+  $(`.rating #star${currentRank}`).prop('checked', true);
 
   $('.rating label').on('click', async function () {
     let rank = parseInt(this.getAttribute('data-value'))
@@ -33,7 +35,6 @@ $(document).ready(async () => {
       window.open(settings.CHROME_STORE_LINK_REVIEW)
     }
 
-    alertMessage('<br><br><br><br>Feedback received.')
-    $('.rating').hide()
+    alertMessage('Feedback received.')
   })
 })
