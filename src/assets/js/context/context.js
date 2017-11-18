@@ -124,7 +124,7 @@ function setUpLinks() {
 }
 
 function handleUI($obj) {
-  let iconUrl = chrome.extension.getURL('icons/icon16.png')
+  let iconUrl = chrome.extension.getURL('assets/media/icons/icon16.png')
   let originBackgroundcolor = $obj.css('background-color')
   $obj.prepend(`<img class="targetsearch-icon-sm targetsearch-icon-flash" alt="TargetSearch" src="${iconUrl}"> `)
 

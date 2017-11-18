@@ -1,8 +1,8 @@
 {
-  "name": "TargetSearch",
+  "name": "Target Search",
   "version": "0.8.0",
   "manifest_version": 2,
-  "description": "Easily locate the text you searched on the result page",
+  "description": "Easily locate the text you searched from google's results page.",
   "icons": {
     "16": "assets/media/icons/icon16.png",
     "48": "assets/media/icons/icon48.png",
