@@ -33,9 +33,11 @@ describe('Extension', function () {
   let browser
   before(async function () {
     browser = await puppeteer.launch({
-      headless: false,
+      headless: false, //process.env.NODE_ENV === 'testing' extension not working with headless. Yet?
       args: [
         '--disable-extensions-except=build/',
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
       ],
     })
   })
@@ -46,7 +48,7 @@ describe('Extension', function () {
 
   describe('Search', function () {
     it('Should scroll to the target', async function () {
-      this.timeout(10000)
+      this.timeout(13000)
       const page = await browser.newPage()
       await page.goto('https://www.google.co.il/search?q=random+text&oq=random+text&aqs=chrome..69i57j69i60j0j69i59j0l2.1392j0j9&sourceid=chrome&ie=UTF-8')
 
