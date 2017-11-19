@@ -5,7 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "clipboard": "^1.7.1",
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "raven-js": "^3.20.1"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -15,6 +16,7 @@
     "babel-preset-es2017": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "chai": "^4.1.2",
+    "chalk": "^2.3.0",
     "clean-webpack-plugin": "^0.1.17",
     "copy-webpack-plugin": "^4.2.0",
     "glob": "^7.1.2",
@@ -22,14 +24,16 @@
     "puppeteer": "^0.13.0",
     "uglifyjs-webpack-plugin": "^1.0.1",
     "webpack": "^3.8.1",
+    "webpack-sentry-plugin": "^1.14.1",
     "zip-webpack-plugin": "^2.0.0"
   },
   "resolutions": {
     "webpack-sources": "1.0.1"
   },
   "scripts": {
-    "build": "webpack --env.NODE_ENV=production && echo '\\033[33m ### TEST your extension's build before publishing! && echo 'Upload to https://chrome.google.com/webstore/developer/edit/nohmjponpgbnhjokbmagdbnjpnmdaigb'",
-    "watch": "webpack --watch --env.NODE_ENV=developent",
+    "deploy": "webpack --progress --config webpack.prod.config.js --env.NODE_ENV=production --env.DEPLOY=true",
+    "build": "webpack --progress --config webpack.prod.config.js --env.NODE_ENV=production",
+    "watch": "webpack --progress --config webpack.dev.config.js --env.NODE_ENV=developent --watch ",
     "test": "/usr/local/bin/node node_modules/mocha/bin/_mocha src/tests/test.js"
   },
   "repository": {

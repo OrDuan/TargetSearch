@@ -3,6 +3,12 @@ import StorageManager from '../storage-manager'
 import * as URL from 'url'
 import * as settings from '../settings'
 import ga from '../analytices-manager'
+import * as Raven from 'raven-js'
+
+Raven.config(
+  settings.RAVEN_DSN, {
+    release: process.env.RELEASE_STAMP,
+  }).install()
 
 let isRTL
 
@@ -307,12 +313,20 @@ async function setUpShareMenu() {
   })
 }
 
-$(document).ready(() => {
-  if (window.location.href.indexOf('.google.') !== -1 && $('#searchform').length) {
-    setUpLinks()
-    setUpShareMenu()
-    ga('send', 'pageview', '/search-results')
-  } else {
-    onNoneGooglePageLoad()
-  }
+Raven.context(function () {
+  $(document).ready(() => {
+    Raven.captureMessage('Broken!')
+    // try {
+    //   b + b
+    // } catch (e) {
+    //   Raven.captureException(e)
+    // }
+    if (window.location.href.indexOf('.google.') !== -1 && $('#searchform').length) {
+      setUpLinks()
+      setUpShareMenudd()
+      ga('send', 'pageview', '/search-results')
+    } else {
+      onNoneGooglePageLoad()
+    }
+  })
 })

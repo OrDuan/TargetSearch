@@ -6,3 +6,4 @@ export const MIN_RANK_TO_REDIRECT_TO_CHROME = 5 // If the user rank us this numb
 // TODO shorten the url to track it? can we fire an event when someone opens the link?
 export const CHROME_STORE_LINK = 'https://chrome.google.com/webstore/detail/targetsearch/nohmjponpgbnhjokbmagdbnjpnmdaigb' // URL to the extension chrome store
 export const CHROME_STORE_LINK_REVIEW = 'https://chrome.google.com/webstore/detail/targetsearch/nohmjponpgbnhjokbmagdbnjpnmdaigb/reviews' // URL to the extension chrome store
+export const RAVEN_DSN = 'https://fe0945129f1f4c0fb6eea719334fe744@sentry.io/247331' // The URL of Data Source Name, it's a public key!
