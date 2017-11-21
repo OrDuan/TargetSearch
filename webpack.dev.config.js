@@ -56,7 +56,6 @@ module.exports = env => {
       ],
     },
     plugins: [
-      new ReloadExtensionsPage(),
       new CopyWebpackPlugin([
         'src/manifest.json',
         'src/html/popup.html',
@@ -69,6 +68,8 @@ module.exports = env => {
         $: 'jquery',
         jQuery: 'jquery',
       }),
+      new ReloadExtensionsPage(),
+
     ],
     node: {
       console: true,
