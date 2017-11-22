@@ -4,14 +4,17 @@ const ZipPlugin = require('zip-webpack-plugin')
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const webpack = require('webpack')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
-const SentryPlugin = require('webpack-sentry-plugin')
 const chalk = require('chalk')
 const readlineSync = require('readline-sync')
 const fs = require('fs')
 const {exec} = require('child_process')
+const rp = require('request-promise')
+
+process.on('unhandledRejection', r => console.error(r))
 
 function handleVersions(oldVersion) {
   let newVersion = readlineSync.question(`Current version is: ${chalk.green(oldVersion)}.\nWhat's the new version? `)
+  // let newVersion = '.'
   let splitVersion = oldVersion.split('.')
 
   if (newVersion === '.') {
@@ -87,13 +90,15 @@ module.exports = env => {
 
     options.plugins = options.plugins.concat([
       new ZipPlugin({path: '../releases/', filename: `${manifest.version}.zip`}),
-      new DeleteSourceMaps({path: 'releases/', filename: `${manifest.version}.zip`}),
+      new DeleteSourceMapsPlugin({path: 'releases/', filename: `${manifest.version}.zip`}),
       new SentryPlugin({
         organization: 'or-duan',
         project: 'extension-js',
-        apiKey: '4a6cba3b764547729013b5a0add2e4d41065fb8dafbb4f639b7410acdb9bde67',
+        apiToken: '',
         release: manifest.version,
-        include: /\.js$/,
+        filesUri: 'chrome-extension:\/\/hjljfmcceigmoljnjakochbgmcedcgnk\/',
+        files: ['app.js', 'app.js.map'],
+        filesPath: 'build/',
       }),
     ])
   }
@@ -107,12 +112,12 @@ module.exports = env => {
   return options
 }
 
-function DeleteSourceMaps(options) {
+function DeleteSourceMapsPlugin(options) {
   this.options = options
 }
 
-DeleteSourceMaps.prototype.apply = function (compiler) {
-  compiler.plugin('after-emit', () => {
+DeleteSourceMapsPlugin.prototype.apply = function (compiler) {
+  compiler.plugin('done', () => {
     console.log('\nDeleting source maps from the zip file.')
     exec(`zip -q -d ${this.options.path}${this.options.filename} "**.js.map"`, (err, stdout, stderr) => {
       if (err || stderr || stdout) {
@@ -122,4 +127,61 @@ DeleteSourceMaps.prototype.apply = function (compiler) {
       }
     })
   })
+}
+
+class SentryPlugin {
+  constructor(options) {
+    this.options = options
+    this.baseUri = `https://sentry.io/api/0/projects/${options.organization}/${options.project}/releases/`
+  }
+
+  apply(compiler) {
+    compiler.plugin('done', async () => {
+      await this.createRelease()
+      await this.uploadFiles()
+    })
+  }
+
+  createRelease() {
+    console.log('\nCreating release')
+    let requestOptions = {
+      method: 'POST',
+      uri: this.baseUri,
+      headers: {
+        'Authorization': `Bearer ${this.options.apiToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: {
+        version: this.options.release,
+      },
+      json: true,
+    }
+    return rp(requestOptions)
+  }
+
+  uploadFiles() {
+    const {options} = this
+    let requestOptions = {
+      method: 'POST',
+      uri: this.baseUri + `${options.release}/files/`,
+      headers: {
+        Authorization: `Bearer ${options.apiToken}`,
+      },
+      json: true,
+    }
+    let fileRequests = []
+    options.files.map(file => {
+      let value = fs.createReadStream(options.filesPath + file)
+
+      let filename = `${options.filesUri}${file}`
+      console.log('\nSending files to sentry: ', file)
+
+      let formData = {
+        file: value,
+        name: filename,
+      }
+      fileRequests.push(rp({...requestOptions, formData: formData}))
+      return Promise.all(fileRequests)
+    })
+  }
 }
