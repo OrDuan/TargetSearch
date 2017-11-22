@@ -25,7 +25,7 @@
     "mocha": "^4.0.1",
     "puppeteer": "^0.13.0",
     "readline-sync": "^1.4.7",
-    "uglifyjs-webpack-plugin": "^1.0.1",
+    "uglifyjs-webpack-plugin": "^1.1.0",
     "webpack": "^3.8.1",
     "webpack-sentry-plugin": "^1.14.1",
     "zip-webpack-plugin": "^2.0.0"

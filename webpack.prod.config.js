@@ -58,6 +58,7 @@ module.exports = env => {
       }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
+        'console.log': function () {},  // Not sure why the uglify isn't working
       }),
       new CopyWebpackPlugin([
         'src/manifest.json',

@@ -260,8 +260,8 @@ async function setUpShareMenu() {
     return
   }
 
-  let iconUrl = chrome.extension.getURL('icons/icon48.png')
-  let copyMenu = chrome.extension.getURL('media/copy_link_menu.png')
+  let iconUrl = chrome.extension.getURL('assets/media/icons/icon48.png')
+  let copyMenu = chrome.extension.getURL('assets/media/copy_link_menu.png')
   $('body').append(`
     <div class="targetsearch-share-menu" data-clipboard-text="${settings.CHROME_STORE_LINK}">
     <div class="disable-btn">X</div>
