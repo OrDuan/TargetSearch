@@ -315,15 +315,9 @@ async function setUpShareMenu() {
 
 Raven.context(function () {
   $(document).ready(() => {
-    Raven.captureMessage('Broken!')
-    // try {
-    //   b + b
-    // } catch (e) {
-    //   Raven.captureException(e)
-    // }
     if (window.location.href.indexOf('.google.') !== -1 && $('#searchform').length) {
       setUpLinks()
-      setUpShareMenudd()
+      setUpShareMenu()
       ga('send', 'pageview', '/search-results')
     } else {
       onNoneGooglePageLoad()

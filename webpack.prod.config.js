@@ -9,12 +9,12 @@ const readlineSync = require('readline-sync')
 const fs = require('fs')
 const {exec} = require('child_process')
 const rp = require('request-promise')
+const secrets = require('./secrets.json')
 
 process.on('unhandledRejection', r => console.error(r))
 
 function handleVersions(oldVersion) {
   let newVersion = readlineSync.question(`Current version is: ${chalk.green(oldVersion)}.\nWhat's the new version? `)
-  // let newVersion = '.'
   let splitVersion = oldVersion.split('.')
 
   if (newVersion === '.') {
@@ -94,10 +94,10 @@ module.exports = env => {
       new SentryPlugin({
         organization: 'or-duan',
         project: 'extension-js',
-        apiToken: '',
+        apiToken: secrets.SENTRY_API_TOKEN,
         release: manifest.version,
         filesUri: 'chrome-extension:\/\/hjljfmcceigmoljnjakochbgmcedcgnk\/',
-        files: ['app.js', 'app.js.map'],
+        files: ['app.js', 'app.js.map', 'popup.js', 'popup.js.map', 'background.js', 'background.js.map'],  // TODO Probably can automate that
         filesPath: 'build/',
       }),
     ])
@@ -112,21 +112,23 @@ module.exports = env => {
   return options
 }
 
-function DeleteSourceMapsPlugin(options) {
-  this.options = options
-}
+class DeleteSourceMapsPlugin {
+  constructor(options) {
+    this.options = options
+  }
 
-DeleteSourceMapsPlugin.prototype.apply = function (compiler) {
-  compiler.plugin('done', () => {
-    console.log('\nDeleting source maps from the zip file.')
-    exec(`zip -q -d ${this.options.path}${this.options.filename} "**.js.map"`, (err, stdout, stderr) => {
-      if (err || stderr || stdout) {
-        console.log(stdout)
-        console.log(err)
-        console.log(stderr)
-      }
+  apply(compiler) {
+    compiler.plugin('done', () => {
+      console.log('\nDeleting source maps from the zip file.')
+      exec(`zip -q -d ${this.options.path}${this.options.filename} "**.js.map"`, (err, stdout, stderr) => {
+        if (err || stderr || stdout) {
+          console.log(stdout)
+          console.log(err)
+          console.log(stderr)
+        }
+      })
     })
-  })
+  }
 }
 
 class SentryPlugin {
@@ -174,7 +176,7 @@ class SentryPlugin {
       let value = fs.createReadStream(options.filesPath + file)
 
       let filename = `${options.filesUri}${file}`
-      console.log('\nSending files to sentry: ', file)
+      console.log('Sending files to sentry: ', file)
 
       let formData = {
         file: value,
