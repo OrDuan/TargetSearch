@@ -37,7 +37,8 @@
         "app.js"
       ],
       "css": [
-        "assets/css/styles.css"
+        "assets/css/styles.css",
+        "assets/css/styles-rtl.css"
       ]
     }
   ]
