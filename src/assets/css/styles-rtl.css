@@ -1,4 +1,4 @@
-.targetsearch-share-menu {
+html[dir="rtl"] .targetsearch-share-menu {
     direction: ltr;
     left: 20px;
     right: auto;
