@@ -235,7 +235,7 @@ async function onNoneGooglePageLoad() {
     return
   }
   findText(text)
-  ga('send', 'pageview', '/target-page')
+  ga('send', 'pageview')
 }
 
 async function shouldShowShareMenu() {
@@ -316,6 +316,7 @@ async function setUpShareMenu() {
 Raven.context(function () {
   $(document).ready(() => {
     if (window.location.href.indexOf('.google.') !== -1 && $('#searchform').length) {
+      ga('send', 'pageview');
       setUpLinks()
       setUpShareMenu()
       ga('send', 'pageview', '/search-results')

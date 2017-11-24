@@ -80,14 +80,14 @@ img.targetsearch-icon-flash {
     all: unset;
     line-height: 1.24;
     word-wrap: break-word;
-    color: #545454;
+    color: #545454!important;
     font-size: small;
     font-family: arial, sans-serif;
 }
 
 ._Tgc .targetsearch-section-link {
     font-size: 16px;
-    color: #222;
+    color: #222!important;
 }
 
 .targetsearch-share-menu h3 {
