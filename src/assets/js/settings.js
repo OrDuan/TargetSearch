@@ -7,3 +7,5 @@ export const MIN_RANK_TO_REDIRECT_TO_CHROME = 5 // If the user rank us this numb
 export const CHROME_STORE_LINK = 'https://chrome.google.com/webstore/detail/targetsearch/nohmjponpgbnhjokbmagdbnjpnmdaigb' // URL to the extension chrome store
 export const CHROME_STORE_LINK_REVIEW = 'https://chrome.google.com/webstore/detail/targetsearch/nohmjponpgbnhjokbmagdbnjpnmdaigb/reviews' // URL to the extension chrome store
 export const RAVEN_DSN = 'https://fe0945129f1f4c0fb6eea719334fe744@sentry.io/247331' // The URL of Data Source Name, it's a public key!
+export const TIME_BEFORE_RETRY_TO_SEARCH_TEXT = 1500 // Time in ms before calling the findText function again on a page with target text
+export const TIME_BEFORE_DELETING_URL = 3000 // Time in ms before deleting the url key in the browser storage, used to handle multiple clicks on the same sectionlink

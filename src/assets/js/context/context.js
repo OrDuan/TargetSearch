@@ -33,7 +33,6 @@ function extractSearchText(text) {
   return text.trim()
 }
 
-
 function getTextFromSearchResult(elm) {
   elm.find('span:contains("Jump")').remove() // Remove redundant "jump to" tags etc
   return elm.html()
@@ -108,7 +107,7 @@ function setUpLinks() {
 
   if (featuredElm.length) {
     let $featuredElm = $(featuredElm[0])
-    url = $featuredElm.find('._Rm').text()
+    url = $featuredElm.find('h3 a').attr('href')
     $paragraph = $featuredElm.find('._Tgc')
 
     // In rtl template we might have `xpdopen` so we need more validation
@@ -120,7 +119,7 @@ function setUpLinks() {
   // Normal search paragraphs
   for (let elm of document.getElementsByClassName('rc')) {
     $paragraph = $(elm).find('span.st')
-    url = $(elm).find('a').attr('href')
+    url = $(elm).find('h3 a').attr('href')
     setUpParagraph(url, $paragraph)
   }
 
@@ -144,21 +143,31 @@ function handleUI($obj) {
 }
 
 function scrollToElement($obj) {
-  let body = $('html, body')
-  let elOffset = $obj.offset().top
-  let elHeight = $obj.height()
-  let windowHeight = $(window).height()
-  let offset
+  const scroll = () => {
+    console.log('scrolling to element...')
+    let body = $('html, body')
+    let elOffset = $obj.offset().top
+    let elHeight = $obj.height()
+    let windowHeight = $(window).height()
+    let offset
 
-  if (elHeight < windowHeight) {
-    offset = elOffset - ((windowHeight / 2) - (elHeight / 2))
-  }
-  else {
-    offset = elOffset
+    if (elHeight < windowHeight) {
+      offset = elOffset - ((windowHeight / 2) - (elHeight / 2))
+    }
+    else {
+      offset = elOffset
+    }
+
+    body.animate({scrollTop: offset}, settings.SCROLLING_SPEED)
+    handleUI($obj)
   }
 
-  body.animate({scrollTop: offset}, settings.SCROLLING_SPEED)
-  handleUI($obj)
+  console.log('Element found!')
+  if (document.hasFocus()) {
+    scroll()
+  } else {
+    $(window).one('focus', scroll)
+  }
 }
 
 function findText(storageText) {
@@ -170,7 +179,7 @@ function findText(storageText) {
     if (obj.length) {
       ga('send', 'event', 'findingAlgo', 'algo1')
       scrollToElement(obj)
-      return
+      return true
     }
     text = text.split(' ').slice(0, -1).join(' ')
   }
@@ -182,7 +191,7 @@ function findText(storageText) {
     if (obj.length) {
       ga('send', 'event', 'findingAlgo', 'algo1')
       scrollToElement(obj)
-      return
+      return true
     }
     text = text.split(' ').slice(1).join(' ')
   }
@@ -194,12 +203,11 @@ function findText(storageText) {
     if (obj.length) {
       ga('send', 'event', 'findingAlgo', 'algo1')
       scrollToElement(obj)
-      return
+      return true
     }
     text = text.split(' ').slice(1).slice(0, -1).join(' ')
   }
-
-  ga('send', 'event', 'findingAlgo', 'cantFind')
+  return false
 }
 
 
@@ -219,7 +227,10 @@ async function getTextFromStorage() {
     let hostname = URL.parse(url).hostname
     let currentHostname = URL.parse(currentUrl).hostname
     if (hostname === currentHostname) {
-      chrome.storage.local.remove(url)
+      // Remove the url key, but with a delay, this way if the user open the same tab twice we'll still
+      // find it on both pages and not just on the first one.
+      setTimeout(() => chrome.storage.local.remove(url), settings.TIME_BEFORE_DELETING_URL)
+
       ga('send', 'event', 'textFromStorage', 'foundAsHost')
       return allUrls[url]
     }
@@ -234,8 +245,18 @@ async function onNoneGooglePageLoad() {
     console.log('Could not find any text for this page.')
     return
   }
-  findText(text)
+
   ga('send', 'pageview')
+
+  // If could't find the text on the first time, try again in X time, so ajax/js render will run first.
+  if (!findText(text)) {
+    setTimeout(() => {
+      if (!findText(text)) {
+        ga('send', 'event', 'findingAlgo', 'cantFind')
+        console.log("Can't find the target text.")
+      }
+    }, settings.TIME_BEFORE_RETRY_TO_SEARCH_TEXT)
+  }
 }
 
 async function shouldShowShareMenu() {
