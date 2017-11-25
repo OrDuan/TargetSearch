@@ -77,7 +77,7 @@ exports.SentryPlugin = class {
 }
 
 
-exports.gitTagDeploy = class {
+exports.gitTagRelease = class {
   constructor(options) {
     this.options = options
   }
