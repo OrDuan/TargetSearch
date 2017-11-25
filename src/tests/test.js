@@ -47,11 +47,10 @@ describe('Extension', function () {
   })
 
   describe('Search', function () {
+    this.timeout(13000)
     it('Should scroll to the target', async function () {
-      this.timeout(13000)
       const page = await browser.newPage()
       await page.goto('https://www.google.co.il/search?q=random+text&oq=random+text&aqs=chrome..69i57j69i60j0j69i59j0l2.1392j0j9&sourceid=chrome&ie=UTF-8')
-
       let {scrollTop, targetElement} = await searchAndScoll(page)
 
       expect(scrollTop).to.be.above(0)
@@ -59,8 +58,6 @@ describe('Extension', function () {
     })
 
     it('Should scroll to the target in english template', async function () {
-      this.timeout(10000)
-
       const page = await browser.newPage()
       await page.goto('https://google.co.il')
 

@@ -5,10 +5,11 @@ import * as settings from '../settings'
 import ga from '../analytices-manager'
 import * as Raven from 'raven-js'
 
-Raven.config(
-  settings.RAVEN_DSN, {
+if (process.env.NODE_ENV === 'production') {
+  Raven.config(settings.RAVEN_DSN, {
     release: process.env.RELEASE_STAMP,
   }).install()
+}
 
 let isRTL
 
@@ -100,21 +101,30 @@ function setUpLinks() {
   console.log('Setting links')
 
   // When google finds the best result, it features it on top of the search paragraphs
-  let featuredElm = document.getElementsByClassName('xpdopen')
+  let $featuredElms = $('.xpdopen')
   let url, $paragraph
 
   isRTL = $('html').attr('dir') === 'rtl'
 
-  if (featuredElm.length) {
-    let $featuredElm = $(featuredElm[0])
-    url = $featuredElm.find('h3 a').attr('href')
-    $paragraph = $featuredElm.find('._Tgc')
-
-    // In rtl template we might have `xpdopen` so we need more validation
-    if (url.length && $paragraph.length) {
-      setUpParagraph(url, $paragraph)
+  $featuredElms = $featuredElms || []
+  $featuredElms.each((i, featuredElm) => {
+    let $featuredElm = $(featuredElm)
+    // Featured elements on the right side has no real links,
+    // just a general maps/photos/website links
+    if ($featuredElm.find('.kp-header').length) {
+      return
     }
-  }
+
+    if ($featuredElm.length) {
+      url = $featuredElm.find('h3 a').attr('href')
+      $paragraph = $featuredElm.find('._Tgc')
+
+      // In rtl template we might have `xpdopen` so we need more validation
+      if (url && url.length && $paragraph.length) {
+        setUpParagraph(url, $paragraph)
+      }
+    }
+  })
 
   // Normal search paragraphs
   for (let elm of document.getElementsByClassName('rc')) {
@@ -163,7 +173,7 @@ function scrollToElement($obj) {
   }
 
   console.log('Element found!')
-  if (document.hasFocus()) {
+  if (!document.hidden) {
     scroll()
   } else {
     $(window).one('focus', scroll)
