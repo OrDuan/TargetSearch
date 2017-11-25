@@ -1,3 +1,5 @@
+const {exec} = require('child_process')
+
 exports.DeleteSourceMapsPlugin = class {
   constructor(options) {
     this.options = options
@@ -70,6 +72,26 @@ exports.SentryPlugin = class {
       }
       fileRequests.push(rp({...requestOptions, formData: formData}))
       return Promise.all(fileRequests)
+    })
+  }
+}
+
+
+exports.gitTagDeploy = class {
+  constructor(options) {
+    this.options = options
+  }
+
+  apply(compiler) {
+    compiler.plugin('done', async () => {
+      console.log('\nTagging git deploy.')
+      exec(`git tag -a ${this.options.version} -m "${this.options.message}" && git push --tags`, (err, stdout, stderr) => {
+        if (err || stderr || stdout) {
+          console.log(stdout)
+          console.log(err)
+          console.log(stderr)
+        }
+      })
     })
   }
 }

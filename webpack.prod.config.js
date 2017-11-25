@@ -10,7 +10,7 @@ const fs = require('fs')
 const {exec} = require('child_process')
 const rp = require('request-promise')
 const secrets = require('./secrets.json')
-const {SentryPlugin, DeleteSourceMapsPlugin} = require('./webpackPlugins')
+const {SentryPlugin, DeleteSourceMapsPlugin, gitTagDeploy} = require('./webpackPlugins')
 
 process.on('unhandledRejection', r => console.error(r))
 
@@ -102,6 +102,7 @@ module.exports = env => {
         files: ['app.js', 'app.js.map', 'popup.js', 'popup.js.map', 'background.js', 'background.js.map'],  // TODO Probably can automate that
         filesPath: 'build/',
       }),
+      new gitTagDeploy({version: manifest.version, message: `Release ${manifest.version}`}),
     ])
 
   }
