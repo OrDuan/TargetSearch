@@ -12,11 +12,11 @@ const click = async (page, selector) => {
   }, selector)
 }
 
-async function searchAndScoll(page) {
+async function searchAndScroll(page, targetUrl, targetSelector) {
   let searchResults = await page.$$('.rc')
   for (let searchElm of searchResults) {
-    let url = await page.evaluate(e => e.innerText, await searchElm.$('._Rm'))
-    if (url === 'https://www.lipsum.com/') {
+    let url = await page.evaluate(e => e.innerText, await searchElm.$(targetSelector))
+    if (url === targetUrl) {
       await click(page, `a[data-target-search-url="${url}"]`)
       break
     }
@@ -51,7 +51,7 @@ describe('Extension', function () {
     it('Should scroll to the target', async function () {
       const page = await browser.newPage()
       await page.goto('https://www.google.co.il/search?q=random+text&oq=random+text&aqs=chrome..69i57j69i60j0j69i59j0l2.1392j0j9&sourceid=chrome&ie=UTF-8')
-      let {scrollTop, targetElement} = await searchAndScoll(page)
+      let {scrollTop, targetElement} = await searchAndScroll(page, 'https://www.lipsum.com/', '._Rm')
 
       expect(scrollTop).to.be.above(0)
       expect(targetElement).to.be.equal(1)
@@ -69,7 +69,28 @@ describe('Extension', function () {
       expect(isEnglish).to.be.true
 
       await page.goto('https://www.google.co.il/search?q=random+text&oq=random+text&aqs=chrome..69i57j69i60j0j69i59j0l2.1392j0j9&sourceid=chrome&ie=UTF-8')
-      let {scrollTop, targetElement} = await searchAndScoll(page)
+      let {scrollTop, targetElement} = await searchAndScroll(page, 'https://www.lipsum.com/', '._Rm')
+
+      expect(scrollTop).to.be.above(0)
+      expect(targetElement).to.be.equal(1)
+    })
+
+    it('Should scroll to the target with featured element', async function () {
+      const page = await browser.newPage()
+
+      await page.goto('https://google.co.il')
+
+      let isEnglish = await page.evaluate(() => document.documentElement.textContent.indexOf('Sign in') > -1)
+      if (!isEnglish) {
+        let englishBtn = await page.$('#_eEe a[href*="setpref"][dir="ltr"]')
+        await englishBtn.click()
+        await page.waitForNavigation()
+        isEnglish = await page.evaluate(() => document.documentElement.textContent.indexOf('Sign in') > -1)
+        expect(isEnglish).to.be.true
+      }
+
+      await page.goto('https://www.google.co.il/search?q=what+js+node&oq=what+&aqs=chrome.0.69i59j69i60l4j69i65.1242j0j7&sourceid=chrome&ie=UTF-8')
+      let {scrollTop, targetElement} = await searchAndScroll(page, 'https://www.tutorialspoint.com/nodejs/nodejs_introduction.htm', '._Rm')
 
       expect(scrollTop).to.be.above(0)
       expect(targetElement).to.be.equal(1)
