@@ -10,6 +10,7 @@ const fs = require('fs')
 const {exec} = require('child_process')
 const rp = require('request-promise')
 const secrets = require('./secrets.json')
+const {SentryPlugin, DeleteSourceMapsPlugin} = require('./webpackPlugins')
 
 process.on('unhandledRejection', r => console.error(r))
 
@@ -102,6 +103,7 @@ module.exports = env => {
         filesPath: 'build/',
       }),
     ])
+
   }
 
   // Temp work around to https://github.com/webpack/webpack/issues/1577
@@ -111,80 +113,4 @@ module.exports = env => {
     }),
   ])
   return options
-}
-
-class DeleteSourceMapsPlugin {
-  constructor(options) {
-    this.options = options
-  }
-
-  apply(compiler) {
-    compiler.plugin('done', () => {
-      console.log('\nDeleting source maps from the zip file.')
-      exec(`zip -q -d ${this.options.path}${this.options.filename} "**.js.map"`, (err, stdout, stderr) => {
-        if (err || stderr || stdout) {
-          console.log(stdout)
-          console.log(err)
-          console.log(stderr)
-        }
-      })
-    })
-  }
-}
-
-class SentryPlugin {
-  constructor(options) {
-    this.options = options
-    this.baseUri = `https://sentry.io/api/0/projects/${options.organization}/${options.project}/releases/`
-  }
-
-  apply(compiler) {
-    compiler.plugin('done', async () => {
-      await this.createRelease()
-      await this.uploadFiles()
-    })
-  }
-
-  createRelease() {
-    console.log('\nCreating release')
-    let requestOptions = {
-      method: 'POST',
-      uri: this.baseUri,
-      headers: {
-        'Authorization': `Bearer ${this.options.apiToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: {
-        version: this.options.release,
-      },
-      json: true,
-    }
-    return rp(requestOptions)
-  }
-
-  uploadFiles() {
-    const {options} = this
-    let requestOptions = {
-      method: 'POST',
-      uri: this.baseUri + `${options.release}/files/`,
-      headers: {
-        Authorization: `Bearer ${options.apiToken}`,
-      },
-      json: true,
-    }
-    let fileRequests = []
-    options.files.map(file => {
-      let value = fs.createReadStream(options.filesPath + file)
-
-      let filename = `${options.filesUri}${file}`
-      console.log('Sending files to sentry: ', file)
-
-      let formData = {
-        file: value,
-        name: filename,
-      }
-      fileRequests.push(rp({...requestOptions, formData: formData}))
-      return Promise.all(fileRequests)
-    })
-  }
 }
