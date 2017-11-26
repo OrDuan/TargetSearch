@@ -130,7 +130,8 @@ function setUpLinks() {
   }
 
   // Setup the onclick event to trigger window open
-  $('a[data-target-search-url]').on('click', onClickSection)
+  // The `mouseup` is for middle mouse click that doesn't work with `click`
+  $('a[data-target-search-url]').on('click mouseup', onClickSection)
 
 }
 
