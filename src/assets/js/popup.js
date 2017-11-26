@@ -1,15 +1,10 @@
 import Clipboard from 'clipboard'
 import StorageManager from './storage-manager'
 import * as settings from './settings'
-import ga from './analytices-manager'
+import {ga, setRaven} from './analytices-manager'
 import * as Raven from 'raven-js'
 
-if (process.env.NODE_ENV === 'production') {
-  Raven.config(settings.RAVEN_DSN, {
-    release: process.env.RELEASE_STAMP,
-  }).install()
-}
-
+setRaven()
 
 function alertMessage(html) {
   let $alert = $('.alert')
@@ -18,7 +13,7 @@ function alertMessage(html) {
   setTimeout(() => $alert.fadeOut(1000), 3000)
 }
 
-$(document).ready(async () => {
+let onReady = async function () {
   $('.copy-btn').attr('data-clipboard-text', settings.CHROME_STORE_LINK)
   let cb = new Clipboard('.copy-btn')
   cb.on('success', () => {
@@ -44,5 +39,11 @@ $(document).ready(async () => {
     }
 
     alertMessage('Feedback received.')
+  })
+}
+
+Raven.context(function () {
+  $(document).ready(() => {
+    onReady()
   })
 })

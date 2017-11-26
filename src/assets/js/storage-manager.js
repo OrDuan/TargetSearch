@@ -4,6 +4,7 @@ class StorageManager {
       'userData.shareMenuCount': 0,
       'userData.disableShareMenu': false,
       'userData.extensionRanking': 0,
+      'userData.uid': [...Array(30)].map(() => Math.random().toString(36)[3]).join(''), // random token
     }
   }
 

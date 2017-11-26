@@ -2,14 +2,10 @@ import Clipboard from 'clipboard'
 import StorageManager from '../storage-manager'
 import * as URL from 'url'
 import * as settings from '../settings'
-import ga from '../analytices-manager'
+import {ga, setRaven} from '../analytices-manager'
 import * as Raven from 'raven-js'
 
-if (process.env.NODE_ENV === 'production') {
-  Raven.config(settings.RAVEN_DSN, {
-    release: process.env.RELEASE_STAMP,
-  }).install()
-}
+setRaven()
 
 let isRTL
 
@@ -323,6 +319,7 @@ async function setUpShareMenu() {
       $('.targetsearch-share-menu-hover').hide()
       $('.targetsearch-share-menu-default').show()
     })
+
   let cb = new Clipboard('.targetsearch-share-menu')
   cb.on('success', () => {
     ga('send', 'event', 'shareMenu', 'click')
@@ -332,6 +329,7 @@ async function setUpShareMenu() {
     $('.targetsearch-share-menu-on-copy-success').fadeIn()
     setTimeout(()=>$('.targetsearch-share-menu').fadeOut(), 8000)
   })
+
   const $targetsearch = $('.targetsearch-share-menu .disable-btn')
   $targetsearch.hover(e => {
     e.stopPropagation()
