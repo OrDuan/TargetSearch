@@ -1,4 +1,7 @@
+const fs = require('fs')
 const {exec} = require('child_process')
+const rp = require('request-promise')
+const secrets = require('./secrets.json')
 
 exports.DeleteSourceMapsPlugin = class {
   constructor(options) {
@@ -75,8 +78,6 @@ exports.SentryPlugin = class {
     })
   }
 }
-
-
 exports.gitTagRelease = class {
   constructor(options) {
     this.options = options
@@ -91,6 +92,52 @@ exports.gitTagRelease = class {
           console.log(err)
           console.log(stderr)
         }
+      })
+    })
+  }
+}
+
+exports.uploadToWebstore = class {
+  constructor(options) {
+    this.options = options
+  }
+
+  apply(compiler) {
+    compiler.plugin('done', async () => {
+      console.log('\nUploading to google store.')
+      let {CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN} = secrets.CHROME_WEBSTORE
+
+      // Get access token
+      let {access_token: accessToken} = await rp.post('https://accounts.google.com/o/oauth2/token', {
+        form: {
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+          refresh_token: REFRESH_TOKEN,
+          grant_type: 'refresh_token',
+          redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+        },
+        json: true,
+      })
+
+      // Upload
+      let headers = {
+        'Authorization': `Bearer ${accessToken}`,
+        'x-goog-api-version': '2',
+      }
+
+      await rp({
+        url: `https://www.googleapis.com/upload/chromewebstore/v1.1/items/nohmjponpgbnhjokbmagdbnjpnmdaigb`,
+        method: 'PUT',
+        headers: headers,
+        body: fs.createReadStream(this.options.zipPath),
+      })
+
+      // Publish
+      await rp({
+        url: `https://www.googleapis.com/chromewebstore/v1.1/items/nohmjponpgbnhjokbmagdbnjpnmdaigb/publish`,
+        method: 'POST',
+        headers: headers,
+        body: '',
       })
     })
   }

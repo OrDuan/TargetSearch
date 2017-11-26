@@ -7,10 +7,8 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 const chalk = require('chalk')
 const readlineSync = require('readline-sync')
 const fs = require('fs')
-const {exec} = require('child_process')
-const rp = require('request-promise')
 const secrets = require('./secrets.json')
-const {SentryPlugin, DeleteSourceMapsPlugin, gitTagRelease} = require('./webpackPlugins')
+const {SentryPlugin, DeleteSourceMapsPlugin, gitTagRelease, uploadToWebstore} = require('./webpackPlugins')
 
 process.on('unhandledRejection', r => console.error(r))
 
@@ -30,6 +28,7 @@ function handleVersions(oldVersion) {
 module.exports = env => {
   let manifest = JSON.parse(fs.readFileSync('./src/manifest.json', 'utf8'))
 
+  let baseDir = __dirname
   let options = {
     entry: {
       app: ['./src/assets/js/context/jquery-color.js', './src/assets/js/context/context.js'],
@@ -38,7 +37,7 @@ module.exports = env => {
     },
     output: {
       filename: '[name].js',
-      path: __dirname + '/build',
+      path: baseDir + '/build',
     },
     module: {
       loaders: [
@@ -103,6 +102,10 @@ module.exports = env => {
         filesPath: 'build/',
       }),
       new gitTagRelease({version: manifest.version, message: `Release ${manifest.version}`}),
+      new uploadToWebstore({
+        version: manifest.version,
+        zipPath: `${baseDir}/releases/${manifest.version}.zip`,
+      }),
     ])
 
   }
