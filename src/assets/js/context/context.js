@@ -328,17 +328,20 @@ async function setUpShareMenu() {
     ga('send', 'event', 'shareMenu', 'click')
     $('.targetsearch-share-menu-hover').remove()
     $('.targetsearch-share-menu-default').remove()
+    $('.targetsearch-share-menu .disable-btn').remove()
     $('.targetsearch-share-menu-on-copy-success').fadeIn()
+    setTimeout(()=>$('.targetsearch-share-menu').fadeOut(), 8000)
   })
   const $targetsearch = $('.targetsearch-share-menu .disable-btn')
   $targetsearch.hover(e => {
     e.stopPropagation()
   })
+
   $targetsearch.on('click', async (e) => {
-    ga('send', 'event', 'shareMenuDisable', 'click')
     e.stopPropagation()
     if (confirm("Are you sure you don't want to share the extension's link? Help other people by sharing it!")) {
       await StorageManager.set({'userData.disableShareMenu': true})
+      ga('send', 'event', 'shareMenuDisable', 'click')
       $('.targetsearch-share-menu').remove()
     }
   })
