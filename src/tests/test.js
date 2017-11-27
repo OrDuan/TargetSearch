@@ -46,6 +46,19 @@ describe('Extension', function () {
     await browser.close()
   })
 
+  beforeEach(function () {
+    setTimeout(async () => {
+      let pages = await browser.pages()
+      // The first page will have the welcome page, we don't need it.
+      pages.forEach(page => {
+        if (page.url().includes('welcome.html')) {
+          page.close()
+        }
+      })
+
+    }, 200) // This is because we have delay until the welcome page opens
+  })
+
   describe('Search', function () {
     this.timeout(13000)
     it('Should scroll to the target', async function () {

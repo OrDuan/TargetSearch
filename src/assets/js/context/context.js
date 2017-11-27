@@ -136,7 +136,7 @@ function setUpLinks() {
 }
 
 function handleUI($obj) {
-  let iconUrl = chrome.runetime.getURL('assets/media/icons/icon16.png')
+  let iconUrl = chrome.runtime.getURL('assets/media/icons/icon16.png')
   let originBackgroundcolor = $obj.css('background-color')
   $obj.prepend(`<img class="targetsearch-icon-sm targetsearch-icon-flash" alt="TargetSearch" src="${iconUrl}"> `)
 
@@ -288,8 +288,8 @@ async function setUpShareMenu() {
     return
   }
 
-  let iconUrl = chrome.extension.getURL('assets/media/icons/icon48.png')
-  let copyMenu = chrome.extension.getURL('assets/media/copy_link_menu.png')
+  let iconUrl = chrome.runtime.getURL('assets/media/icons/icon48.png')
+  let copyMenu = chrome.runtime.getURL('assets/media/copy_link_menu.png')
   $('body').append(`
     <div class="targetsearch-share-menu" data-clipboard-text="${settings.CHROME_STORE_LINK}">
     <div class="disable-btn">X</div>
