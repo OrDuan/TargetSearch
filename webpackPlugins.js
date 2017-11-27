@@ -86,7 +86,7 @@ exports.gitTagRelease = class {
   apply(compiler) {
     compiler.plugin('done', async () => {
       console.log('\nTagging git deploy.')
-      exec(`git tag -a ${this.options.version} -m "${this.options.message}" && git push --tags`, (err, stdout, stderr) => {
+      exec(`git commit -m "Version bump [${this.options.version}]" && git tag -a ${this.options.version} -m "${this.options.message}" && git push`, (err, stdout, stderr) => {
         if (err || stderr || stdout) {
           console.log(stdout)
           console.log(err)
