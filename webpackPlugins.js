@@ -142,3 +142,16 @@ exports.uploadToWebstore = class {
     })
   }
 }
+
+exports.ReloadExtensionsPage = class  {
+  apply(compiler) {
+    compiler.plugin('done', function () {
+      exec('chromix-too reload chrome://extensions/', (err, stdout, stderr) => {
+        if (err || stderr) {
+          console.log(err)
+          console.log(stderr)
+        }
+      })
+    })
+  }
+}

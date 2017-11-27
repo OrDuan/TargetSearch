@@ -62,7 +62,6 @@ module.exports = env => {
       }),
       new CopyWebpackPlugin([
         'src/manifest.json',
-        'src/html/popup.html',
         {from: 'src/assets', to: 'assets/', ignore: ['*.js']},
       ]),
       new UglifyJSPlugin({

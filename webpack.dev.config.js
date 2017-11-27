@@ -1,6 +1,6 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webpack = require('webpack')
-const {exec} = require('child_process')
+const {ReloadExtensionsPage} = require('./webpackPlugins')
 
 // TODO automate the CRX file build:
 // https://developer.chrome.com/extensions/external_extensions
@@ -18,19 +18,6 @@ const {exec} = require('child_process')
 //
 // Every time you make a change, the extension will be updated
 
-
-class ReloadExtensionsPage {
-  apply(compiler) {
-    compiler.plugin('done', function () {
-      exec('chromix-too reload chrome://extensions/', (err, stdout, stderr) => {
-        if (err || stderr) {
-          console.log(err)
-          console.log(stderr)
-        }
-      })
-    })
-  }
-}
 
 module.exports = env => {
 
@@ -58,7 +45,6 @@ module.exports = env => {
     plugins: [
       new CopyWebpackPlugin([
         'src/manifest.json',
-        'src/html/popup.html',
         {from: 'src/assets', to: 'assets/', ignore: ['*.js']},
       ]),
       new webpack.DefinePlugin({
