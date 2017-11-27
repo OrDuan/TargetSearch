@@ -100,7 +100,11 @@ module.exports = env => {
         files: ['app.js', 'app.js.map', 'popup.js', 'popup.js.map', 'background.js', 'background.js.map'],  // TODO Probably can automate that
         filesPath: 'build/',
       }),
-      new gitTagRelease({version: manifest.version, message: `Release ${manifest.version}`}),
+      new gitTagRelease({
+        version: manifest.version,
+        message: `Release ${manifest.version}`,
+        manifestPath: baseDir + '/src/manifest.json'
+      }),
       new uploadToWebstore({
         version: manifest.version,
         zipPath: `${baseDir}/releases/${manifest.version}.zip`,
