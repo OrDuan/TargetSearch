@@ -97,7 +97,7 @@ module.exports = env => {
         apiToken: secrets.SENTRY_API_TOKEN,
         release: manifest.version,
         filesUri: 'chrome-extension:\/\/hjljfmcceigmoljnjakochbgmcedcgnk\/',
-        files: ['app.js', 'app.js.map', 'popup.js', 'popup.js.map', 'background.js', 'background.js.map'],  // TODO Probably can automate that
+        files: ['app.js.map', 'popup.js.map', 'background.js.map'],  // TODO Probably can automate that
         filesPath: 'build/',
       }),
       new gitTagRelease({
