@@ -37,7 +37,7 @@ module.exports = env => {
           test: /\.js$/,
           loader: 'babel-loader',
           query: {
-            presets: ['es2017', 'stage-2'],
+            presets: ['es2017', 'stage-2', 'flow'],
           },
         },
       ],
