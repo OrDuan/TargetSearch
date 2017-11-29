@@ -56,7 +56,7 @@ describe('Extension', function () {
         }
       })
 
-    }, 200) // This is because we have delay until the welcome page opens
+    }, 1000) // This is because we have delay until the welcome page opens
   })
 
   describe('Search', function () {
