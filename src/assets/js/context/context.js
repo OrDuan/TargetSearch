@@ -1,3 +1,5 @@
+// @flow
+
 import Clipboard from 'clipboard'
 import StorageManager from '../storage-manager'
 import * as URL from 'url'
@@ -9,7 +11,7 @@ setRaven()
 
 let isRTL
 
-function extractSearchText(text) {
+function extractSearchText(text: string): string {
   // Check for this wired middle dot, mostly a janner or a category
   text = text.split('·')[1] || text.split('·')[0]
 
@@ -25,12 +27,12 @@ function extractSearchText(text) {
     text = text.slice(1, -1)
   }
 
-  text = text.replace(/"/g, String.raw`\"`)
+  text = text.replace(/"/g, '\\"')  // TODO This is changed, might break stuff
 
   return text.trim()
 }
 
-function getTextFromSearchResult(elm) {
+function getTextFromSearchResult(elm: JQuery) {
   elm.find('span:contains("Jump")').remove() // Remove redundant "jump to" tags etc
   return elm.html()
 }
@@ -61,7 +63,7 @@ function attachLink(section, url, text) {
   return `<a class="targetsearch-section-link" href="${url}" data-target-search-url="${encodeURI(url)}" data-target-search-text="${encodeURI(text)}">${section}</a>`
 }
 
-function setUpParagraph(url, $paragraph) {
+function setUpParagraph(url, $paragraph: JQuery): boolean {
   let newSections = []
   let paragraphPosition = 0
 
@@ -141,10 +143,12 @@ function handleUI($obj) {
   $obj.prepend(`<img class="targetsearch-icon-sm targetsearch-icon-flash" alt="TargetSearch" src="${iconUrl}"> `)
 
   $obj.animate({
+    // $FlowFixMe
     backgroundColor: $.Color('#abcdef'),
   }, 100)
 
   $obj.animate({
+    // $FlowFixMe
     backgroundColor: $.Color(originBackgroundcolor),
   }, 1500)
 }
@@ -177,7 +181,7 @@ function scrollToElement($obj) {
   }
 }
 
-function findText(storageText) {
+function findText(storageText: string): boolean {
   let extractedText = extractSearchText(storageText)
   let text = extractedText
   console.log('Got data', text)
@@ -218,7 +222,7 @@ function findText(storageText) {
 }
 
 
-async function getTextFromStorage() {
+async function getTextFromStorage(): Promise<string | null> {
   let currentUrl = window.location.href
   let url = await StorageManager.get(currentUrl)
   if (!$.isEmptyObject(url)) {
@@ -258,6 +262,7 @@ async function onNoneGooglePageLoad() {
   // If could't find the text on the first time, try again in X time, so ajax/js render will run first.
   if (!findText(text)) {
     setTimeout(() => {
+      // $FlowFixMe TODO No idea why it error about the text
       if (!findText(text)) {
         ga('send', 'event', 'findingAlgo', 'cantFind')
         console.log("Can't find the target text.")

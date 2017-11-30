@@ -26,6 +26,7 @@
     "flow-bin": "^0.59.0",
     "flow-interfaces-chrome": "^0.3.2",
     "glob": "^7.1.2",
+    "iflow-jquery": "^1.2.4",
     "mocha": "^4.0.1",
     "puppeteer": "^0.13.0",
     "readline-sync": "^1.4.7",

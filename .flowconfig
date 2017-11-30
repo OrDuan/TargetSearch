@@ -1,9 +1,11 @@
 [ignore]
+.*/node_modules/.*
 
 [include]
 
 [libs]
 node_modules/flow-interfaces-chrome/interfaces/
+node_modules/iflow-jquery/
 
 [lints]
 
