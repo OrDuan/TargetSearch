@@ -17,7 +17,6 @@ jobs:
     working_directory: ~/google_extension
 
     steps:
-      - run: sudo chmod 777 -R /tmp/_circleci_local_build_repo
       - checkout
 
       # Download and cache dependencies
