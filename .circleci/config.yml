@@ -33,7 +33,7 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      # run tests!
-      - run: echo "done!"
+      # run flow type checker
+      - run: node_modules/flow-bin/cli.js status
 
 
