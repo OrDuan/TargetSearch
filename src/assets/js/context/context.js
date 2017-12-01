@@ -37,7 +37,7 @@ function getTextFromSearchResult(elm: JQuery) {
   return elm.html()
 }
 
-function getCleanTextFromSearchResult(elm) {
+function getCleanTextFromSearchResult(elm: JQuery) {
   if (isRTL) {
     elm.find('span').not('[dir="ltr"]').remove()
   } else {

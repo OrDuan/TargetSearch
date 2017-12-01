@@ -24,7 +24,7 @@ export async function setRaven() {
 
     // To capture unhandled promises with sentry
     window.onunhandledrejection = function (evt) {
-      Raven.captureException(evt.reason)
+      Raven.captureException(evt)
     }
 
     let userData = await StorageManager.getUserData()
