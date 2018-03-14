@@ -1,34 +1,34 @@
-const MinifyPlugin = require('babel-minify-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const ZipPlugin = require('zip-webpack-plugin')
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
-const webpack = require('webpack')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
-const chalk = require('chalk')
-const readlineSync = require('readline-sync')
-const fs = require('fs')
-const secrets = require('./secrets.json')
-const {SentryPlugin, DeleteSourceMapsPlugin, gitTagRelease, uploadToWebstore} = require('./webpackPlugins')
+const MinifyPlugin = require('babel-minify-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ZipPlugin = require('zip-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const webpack = require('webpack');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const chalk = require('chalk');
+const readlineSync = require('readline-sync');
+const fs = require('fs');
+const secrets = require('./secrets.json');
+const {SentryPlugin, DeleteSourceMapsPlugin, gitTagRelease, uploadToWebstore} = require('./webpackPlugins');
 
-process.on('unhandledRejection', r => console.error(r))
+process.on('unhandledRejection', r => console.error(r));
 
 function handleVersions(oldVersion) {
-  let newVersion = readlineSync.question(`Current version is: ${chalk.green(oldVersion)}.\nWhat's the new version? `)
-  let splitVersion = oldVersion.split('.')
+  let newVersion = readlineSync.question(`Current version is: ${chalk.green(oldVersion)}.\nWhat's the new version? `);
+  let splitVersion = oldVersion.split('.');
 
   if (newVersion === '.') {
-    let minor = parseInt(splitVersion[2])
-    newVersion = [splitVersion[0], splitVersion[1], ++minor].join('.')
+    let minor = parseInt(splitVersion[2]);
+    newVersion = [splitVersion[0], splitVersion[1], ++minor].join('.');
   } else if (splitVersion.length - 1 !== 2 || newVersion === oldVersion) {
-    throw new Error('Malformed version format, should be X.X.X and different from last version.')
+    throw new Error('Malformed version format, should be X.X.X and different from last version.');
   }
-  return newVersion
+  return newVersion;
 }
 
 module.exports = env => {
-  let manifest = JSON.parse(fs.readFileSync('./src/manifest.json', 'utf8'))
+  let manifest = JSON.parse(fs.readFileSync('./src/manifest.json', 'utf8'));
 
-  let baseDir = __dirname
+  let baseDir = __dirname;
   let options = {
     entry: {
       app: ['./src/assets/js/context/jquery-color.js', './src/assets/js/context/context.js'],
@@ -58,7 +58,8 @@ module.exports = env => {
       }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
-        'console.log': function () {},  // Not sure why the uglify isn't working
+        'console.log': function () {
+        },  // Not sure why the uglify isn't working
       }),
       new CopyWebpackPlugin([
         'src/manifest.json',
@@ -79,14 +80,14 @@ module.exports = env => {
       module: 'empty',
     },
     devtool: 'source-map',
-  }
+  };
   if (env.DEPLOY) {
-    console.log(chalk.black.bgRed('############### DEPLOYING ###############\n'))
+    console.log(chalk.black.bgRed('############### DEPLOYING ###############\n'));
 
-    let newVersion = handleVersions(manifest.version)
-    manifest.version = newVersion
-    fs.writeFileSync('./src/manifest.json', JSON.stringify(manifest, null, 2))
-    console.log(`The new version is: ${chalk.green(newVersion)}`)
+    let newVersion = handleVersions(manifest.version);
+    manifest.version = newVersion;
+    fs.writeFileSync('./src/manifest.json', JSON.stringify(manifest, null, 2));
+    console.log(`The new version is: ${chalk.green(newVersion)}`);
 
     options.plugins = options.plugins.concat([
       new ZipPlugin({path: '../releases/', filename: `${manifest.version}.zip`}),
@@ -103,13 +104,13 @@ module.exports = env => {
       new gitTagRelease({
         version: manifest.version,
         message: `Release ${manifest.version}`,
-        manifestPath: baseDir + '/src/manifest.json'
+        manifestPath: baseDir + '/src/manifest.json',
       }),
       new uploadToWebstore({
         version: manifest.version,
         zipPath: `${baseDir}/releases/${manifest.version}.zip`,
       }),
-    ])
+    ]);
 
   }
 
@@ -118,6 +119,6 @@ module.exports = env => {
     new webpack.DefinePlugin({
       'process.env.RELEASE_STAMP': JSON.stringify(manifest.version),
     }),
-  ])
-  return options
-}
+  ]);
+  return options;
+};

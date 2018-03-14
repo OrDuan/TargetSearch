@@ -1,36 +1,36 @@
 // @flow
 
-import * as Raven from 'raven-js'
-import * as settings from './settings'
-import StorageManager from './storage-manager'
+import * as Raven from 'raven-js';
+import * as settings from './settings';
+import StorageManager from './storage-manager';
 
 export function ga(...args: string[]): Promise<any> {
   return new Promise((resolve, reject) => {
     try {
       chrome.runtime.sendMessage({params: args}, response => {
-        resolve(response)
-      })
+        resolve(response);
+      });
     } catch (e) {
-      reject(e)
+      reject(e);
     }
-  })
+  });
 }
 
 export async function setRaven() {
   if (process.env.NODE_ENV === 'production') {
     Raven.config(settings.RAVEN_DSN, {
       release: process.env.RELEASE_STAMP,
-    }).install()
+    }).install();
 
     // To capture unhandled promises with sentry
     window.onunhandledrejection = function (evt) {
-      Raven.captureException(evt)
-    }
+      Raven.captureException(evt);
+    };
 
-    let userData = await StorageManager.getUserData()
+    let userData = await StorageManager.getUserData();
     Raven.setUserContext({
       id: userData['userData.uid'],
-    })
+    });
   }
 }
 

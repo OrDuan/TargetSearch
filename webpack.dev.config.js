@@ -1,6 +1,6 @@
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const webpack = require('webpack')
-const {ReloadExtensionsPage} = require('./webpackPlugins')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
+const {ReloadExtensionsPage} = require('./webpackPlugins');
 
 // TODO automate the CRX file build:
 // https://developer.chrome.com/extensions/external_extensions
@@ -70,5 +70,5 @@ module.exports = env => {
       ignored: /node_modules/,
     },
     devtool: 'source-map',
-  }
-}
+  };
+};
