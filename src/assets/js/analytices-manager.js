@@ -1,10 +1,8 @@
-// @flow
-
 import * as Raven from 'raven-js';
 import * as settings from './settings';
 import StorageManager from './storage-manager';
 
-export function ga(...args: string[]): Promise<any> {
+export function ga(...args) {
   return new Promise((resolve, reject) => {
     try {
       chrome.runtime.sendMessage({params: args}, response => {

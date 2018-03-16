@@ -1,5 +1,3 @@
-// @flow
-
 import {ga, setRaven} from '../analytices-manager';
 import * as Raven from 'raven-js';
 import {setUpLinks, setUpShareMenu} from './search-resulst-page';

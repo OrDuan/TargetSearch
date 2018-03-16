@@ -1,21 +1,12 @@
-// @flow
-
-type userDataType = {
-  'userData.shareMenuCount': number,
-  'userData.disableShareMenu': boolean,
-  'userData.extensionRanking': number,
-  'userData.uid': string
-}
-
 class StorageManager {
-  userDataDefaults: userDataType = {
+  userDataDefaults = {
     'userData.shareMenuCount': 0,
     'userData.disableShareMenu': false,
     'userData.extensionRanking': 0,
     'userData.uid': [...Array(30)].map(() => Math.random().toString(36)[3]).join(''), // random token
   };
 
-  get(items: string | string[] | null): Promise<*> {
+  get(items) {
     return new Promise((resolve, reject) => {
       try {
         // $FlowFixMe The flow api isn't updated
@@ -29,7 +20,7 @@ class StorageManager {
     });
   }
 
-  set(items: Object): Promise<any> {
+  set(items) {
     return new Promise((resolve, reject) => {
       try {
         chrome.storage.local.set(items, responseItems => {
@@ -42,7 +33,7 @@ class StorageManager {
     });
   }
 
-  async getUserData(): Promise<userDataType> {
+  async getUserData() {
     let items = Object.keys(this.userDataDefaults);
     return {...this.userDataDefaults, ...await this.get(items)};
   }

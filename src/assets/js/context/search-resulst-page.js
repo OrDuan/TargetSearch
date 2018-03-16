@@ -1,5 +1,3 @@
-// @flow
-
 import Clipboard from 'clipboard';
 import StorageManager from '../storage-manager';
 import * as settings from '../settings';
@@ -7,12 +5,12 @@ import {ga} from '../analytices-manager';
 
 let isRTL;
 
-function getTextFromSearchResult(elm: JQuery) {
+function getTextFromSearchResult(elm) {
   elm.find('span:contains("Jump")').remove(); // Remove redundant "jump to" tags etc
   return elm.html();
 }
 
-function getCleanTextFromSearchResult(elm: JQuery) {
+function getCleanTextFromSearchResult(elm) {
   if (isRTL) {
     elm.find('span').not('[dir="ltr"]').remove();
   } else {
@@ -38,7 +36,7 @@ function attachLink(section, url, text) {
   return `<a class="targetsearch-section-link" href="${url}" data-target-search-url="${encodeURI(url)}" data-target-search-text="${encodeURI(text)}">${section}</a>`;
 }
 
-function setUpParagraph(url, $paragraph: JQuery): boolean {
+function setUpParagraph(url, $paragraph) {
   let newSections = [];
   let paragraphPosition = 0;
 

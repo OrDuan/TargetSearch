@@ -1,11 +1,9 @@
-// @flow
-
 import StorageManager from '../storage-manager';
 import * as URL from 'url';
 import * as settings from '../settings';
 import {ga} from '../analytices-manager';
 
-function extractSearchText(text: string): string {
+function extractSearchText(text) {
   // Check for this wired middle dot, mostly a janner or a category
   text = text.split('·')[1] || text.split('·')[0];
 
@@ -32,12 +30,10 @@ function handleUI($obj) {
   $obj.prepend(`<img class="targetsearch-icon-sm targetsearch-icon-flash" alt="TargetSearch" src="${iconUrl}"> `);
 
   $obj.animate({
-    // $FlowFixMe
     backgroundColor: $.Color('#abcdef'),
   }, 100);
 
   $obj.animate({
-    // $FlowFixMe
     backgroundColor: $.Color(originBackgroundcolor),
   }, 1500);
 }
@@ -70,7 +66,7 @@ function scrollToElement($obj) {
   }
 }
 
-function findText(storageText: string): boolean {
+function findText(storageText) {
   let extractedText = extractSearchText(storageText);
   let text = extractedText;
   console.log('Got data', text);
@@ -111,7 +107,7 @@ function findText(storageText: string): boolean {
 }
 
 
-async function getTextFromStorage(): Promise<string | null> {
+async function getTextFromStorage() {
   let currentUrl = window.location.href;
   let url = await StorageManager.get(currentUrl);
   if (!$.isEmptyObject(url)) {
