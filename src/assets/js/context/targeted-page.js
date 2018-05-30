@@ -24,9 +24,14 @@ function extractSearchText(text) {
   return text.trim();
 }
 
-function handleUI($obj) {
+async function handleUI($obj) {
   let iconUrl = chrome.runtime.getURL('assets/media/icons/icon16.png');
   let originBackgroundcolor = $obj.css('background-color');
+  let showFlashingIcon = (await StorageManager.get('userData.showFlashingIcon'))['userData.showFlashingIcon'];
+  if (!showFlashingIcon) {
+    $obj.prepend(`<img class="targetsearch-icon-sm" alt="TargetSearch" src="${iconUrl}"> `);
+    return;
+  }
   $obj.prepend(`<img class="targetsearch-icon-sm targetsearch-icon-flash" alt="TargetSearch" src="${iconUrl}"> `);
 
   $obj.animate({

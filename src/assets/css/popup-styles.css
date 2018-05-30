@@ -1,7 +1,8 @@
 body {
-    margin: 0px;
+    margin: 0;
     direction: ltr;
     text-align: center;
+    width: 150px;
 }
 
 ul {
@@ -17,7 +18,7 @@ ul li.header {
 }
 
 ul li {
-    padding: 5px 15px;
+    padding: 5px;
 }
 
 ul li.item {
@@ -26,6 +27,10 @@ ul li.item {
 
 ul li.item:hover {
     background-color: #eeeeee;
+}
+
+input[type="checkbox"] {
+    margin: 0;
 }
 
 .content {
@@ -61,6 +66,7 @@ h1 {
 
 .rating {
     border: none;
+    direction: rtl;
 }
 
 .rating > input {
@@ -78,7 +84,6 @@ h1 {
 
 .rating > label {
     color: #ddd;
-    float: right;
 }
 
 /***** CSS Magic to Highlight Stars on Hover *****/

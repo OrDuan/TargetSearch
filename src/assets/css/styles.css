@@ -83,6 +83,7 @@ img.targetsearch-icon-flash {
     color: #545454!important;
     font-size: small;
     font-family: arial, sans-serif;
+    cursor: pointer;
 }
 
 ._Tgc .targetsearch-section-link {

@@ -26,7 +26,14 @@ let onReady = async function () {
     $('.rating').hide();
   }
 
+  let showFlashingIcon = (await StorageManager.get('userData.showFlashingIcon'))['userData.showFlashingIcon'];
+  $('#flash-icon').prop('checked', showFlashingIcon);
   $(`.rating #star${currentRank}`).prop('checked', true);
+
+  $('#flash-icon').on('click', async function () {
+    let isChecked = $(this).is(":checked");
+    await StorageManager.set({'userData.showFlashingIcon': isChecked});
+  });
 
   $('.rating label').on('click', async function () {
     let rank = parseInt(this.getAttribute('data-value'));
