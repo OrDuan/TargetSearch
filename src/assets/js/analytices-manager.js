@@ -16,19 +16,14 @@ export function ga(...args) {
 
 export async function setRaven() {
   if (process.env.NODE_ENV === 'production') {
-    Raven.config(settings.RAVEN_DSN, {
-      release: process.env.RELEASE_STAMP,
-    }).install();
-
-    // To capture unhandled promises with sentry
-    window.onunhandledrejection = function (evt) {
-      Raven.captureException(evt);
-    };
-
-    let userData = await StorageManager.getUserData();
-    Raven.setUserContext({
-      id: userData['userData.uid'],
-    });
+    // Raven.config(settings.RAVEN_DSN, {
+    //   release: process.env.RELEASE_STAMP,
+    // }).install();
+    //
+    // let userData = await StorageManager.getUserData();
+    // Raven.setUserContext({
+    //   id: userData['userData.uid'],
+    // });
   }
 }
 
