@@ -69,6 +69,6 @@ module.exports = env => {
       poll: 300,
       ignored: /node_modules/,
     },
-    devtool: 'source-map',
+    devtool: 'inline-source-map',
   };
 };

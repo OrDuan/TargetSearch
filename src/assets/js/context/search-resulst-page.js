@@ -87,7 +87,7 @@ export function setUpLinks() {
     }
 
     if ($featuredElm.length) {
-      url = $featuredElm.find('h3 a').attr('href');
+      url = $featuredElm.find('a[ping]').attr('href');
       $paragraph = $featuredElm.find('._Tgc');
 
       // In rtl template we might have `xpdopen` so we need more validation
@@ -100,7 +100,7 @@ export function setUpLinks() {
   // Normal search paragraphs
   for (let elm of document.getElementsByClassName('rc')) {
     $paragraph = $(elm).find('span.st');
-    url = $(elm).find('h3 a').attr('href');
+    url = $(elm).find('a[ping]').attr('href');
     setUpParagraph(url, $paragraph);
   }
 
